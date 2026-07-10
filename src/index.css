@@ -1,0 +1,111 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Cinzel:wght@400;500;600;700;800;900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 4%; /* #0A0A0A */
+    --foreground: 37 31% 94%; /* #F5F0E8 */
+
+    --card: 0 0% 6%; /* #0F0F0F */
+    --card-foreground: 37 31% 94%;
+
+    --popover: 0 0% 6%;
+    --popover-foreground: 37 31% 94%;
+
+    --primary: 44 54% 54%; /* #C9A84C */
+    --primary-foreground: 0 0% 4%;
+
+    --secondary: 44 54% 54%; /* #C9A84C */
+    --secondary-foreground: 0 0% 4%;
+
+    --muted: 0 0% 10%; /* #1A1A1A */
+    --muted-foreground: 37 10% 60%;
+
+    --accent: 163 100% 33%; /* #00A878 */
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 44 30% 15%; /* Gold-tinted charcoal border */
+    --input: 44 30% 15%;
+    --ring: 44 54% 54%;
+
+    --radius: 0px;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+    border-radius: 0px !important; /* Enforce strict sharp corners for premium aesthetic */
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background-color: #0A0A0A;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Montserrat', sans-serif;
+  }
+}
+
+@layer utilities {
+  .font-cormorant {
+    font-family: 'Cormorant Garamond', serif;
+  }
+
+  .font-cinzel {
+    font-family: 'Cinzel', serif;
+  }
+
+  .font-montserrat {
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .glass {
+    background: rgba(10, 10, 10, 0.75);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(201, 168, 76, 0.15);
+  }
+
+  .gold-border {
+    border: 1px solid rgba(201, 168, 76, 0.25);
+  }
+
+  .gold-border-hover {
+    transition: all 0.3s ease;
+  }
+  .gold-border-hover:hover {
+    border-color: rgba(201, 168, 76, 0.8);
+    box-shadow: 0 0 15px rgba(201, 168, 76, 0.15);
+  }
+
+  .gold-text-glow {
+    text-shadow: 0 0 20px rgba(201, 168, 76, 0.2);
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Animations */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes typing-cursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
