@@ -17,7 +17,7 @@ function Navbar() {
     localStorage.removeItem("user");
     setMenuOpen(false);
     setAccountDropdown(false);
-    navigate("/login");
+    navigate("/");
   };
 
   // Close dropdown on click outside

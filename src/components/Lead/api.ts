@@ -9,7 +9,7 @@ export const callGooglePlaces = async (
   searchIndustry: string,
   searchLocation: string,
   addLog: LogCallback
-): Promise<any[]> => {
+): Promise<{ source: string; geocodeFailed: boolean; leads: any[] }> => {
   addLog(`📞 Querying backend Overpass API for: "${searchIndustry}" in "${searchLocation}"`, "action");
 
   try {
@@ -19,8 +19,24 @@ export const callGooglePlaces = async (
         category: searchIndustry
       }
     });
-    addLog(`✨ Search complete. Found ${response.data.length} listings.`, "info");
-    return response.data;
+    
+    const data = response.data;
+    if (data && typeof data === "object" && "leads" in data) {
+      addLog(`✨ Search complete. Found ${data.leads.length} listings.`, "info");
+      return {
+        source: data.source || "osm",
+        geocodeFailed: !!data.geocodeFailed,
+        leads: data.leads || []
+      };
+    } else {
+      const leadsArray = Array.isArray(data) ? data : [];
+      addLog(`✨ Search complete. Found ${leadsArray.length} listings.`, "info");
+      return {
+        source: "osm",
+        geocodeFailed: false,
+        leads: leadsArray
+      };
+    }
   } catch (err: any) {
     const errMsg = err.response?.data?.message || err.message || err;
     addLog(`❌ Failed Overpass search: ${errMsg}`, "error");

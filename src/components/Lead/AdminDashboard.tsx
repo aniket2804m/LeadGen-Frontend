@@ -1,30 +1,19 @@
 import React from "react";
-import { ScoredLead } from "./types";
+import { ScoredLead, StatusLog } from "./types";
 import { 
   Users, 
-  Flame, 
-  DollarSign, 
-  TrendingUp, 
-  Activity, 
-  ShieldAlert,
+  Check, 
+  Monitor, 
+  Mail, 
+  MessageSquareCode, 
+  Calendar,
+  ChevronRight,
+  TrendingUp,
+  Activity,
   Play,
   Square
 } from "lucide-react";
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  Tooltip, 
-  ResponsiveContainer,
-  LineChart, 
-  Line,
-  CartesianGrid,
-  AreaChart,
-  Area,
-  Legend
-} from "recharts";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -34,6 +23,7 @@ interface AdminDashboardProps {
   isAutoFinding: boolean;
   onToggleAutoFinding: () => void;
   onNavigateToFinder: () => void;
+  logs?: StatusLog[];
 }
 
 export default React.memo(function AdminDashboard({
@@ -42,278 +32,231 @@ export default React.memo(function AdminDashboard({
   isAutoFinding,
   onToggleAutoFinding,
   onNavigateToFinder,
+  logs = [],
 }: AdminDashboardProps) {
   
   // Calculate analytics metrics
-  const activePipelineCount = crmLeads.length;
-  const hotLeadsCount = crmLeads.filter((l) => l.score === "HOT").length;
-  
-  // Projected Revenue calculation (parses proposal retainer price)
-  const projectedRevenue = crmLeads.reduce((acc, lead) => {
-    if (lead.status === "CLOSED" || lead.status === "PROPOSAL_SENT") {
-      const priceStr = lead.auditData?.proposal?.pricing || "$1000";
-      const matches = priceStr.match(/\d[\d,.]*/);
-      if (matches) {
-        const num = parseFloat(matches[0].replace(/,/g, ""));
-        return acc + num;
-      }
-      return acc + 1000;
-    }
-    return acc;
-  }, 0);
+  const totalLeads = crmLeads.length;
+  const qualifiedCount = crmLeads.filter((l) => l.score === "HOT").length;
+  const demoSitesCount = crmLeads.filter((l) => l.status === "CLOSED").length;
+  const contactedCount = crmLeads.filter((l) => l.status === "CONTACTED" || l.status === "PROPOSAL_SENT").length;
+  const repliedCount = crmLeads.filter((l) => l.status === "CLOSED").length;
 
-  // Conversion Funnel data
-  const newCount = crmLeads.filter((l) => l.status === "NEW").length;
-  const reachedCount = crmLeads.filter((l) => l.status === "CONTACTED").length;
-  const proposalCount = crmLeads.filter((l) => l.status === "PROPOSAL_SENT").length;
-  const closedCount = crmLeads.filter((l) => l.status === "CLOSED").length;
-
-  const funnelData = [
-    { name: "New Leads", count: newCount, fill: "#71717a" },
-    { name: "Reached", count: reachedCount, fill: "#f5c518" },
-    { name: "Proposals", count: proposalCount, fill: "#f97316" },
-    { name: "Closed Deals", count: closedCount, fill: "#22c55e" }
-  ];
-
-  // PageSpeed speed distribution data
-  const speedData = crmLeads
-    .filter((l) => l.auditData && l.auditData.pageSpeed && l.website)
-    .map((l, index) => ({
-      index: index + 1,
-      name: l.name.split(" ")[0],
-      speed: l.auditData?.pageSpeed?.performance || 0,
-      seo: l.auditData?.pageSpeed?.seo || 0
-    }));
-
-  // 6-Month Projected Revenue Growth and success rate trend
-  const successRate = crmLeads.length > 0 ? Math.round((closedCount / crmLeads.length) * 100) : 0;
-  const growthTrendData = [
-    { month: "Jan", "Projected Revenue ($)": Math.round(projectedRevenue * 0.2), "Proposal Success (%)": Math.round(successRate * 0.4) },
-    { month: "Feb", "Projected Revenue ($)": Math.round(projectedRevenue * 0.35), "Proposal Success (%)": Math.round(successRate * 0.55) },
-    { month: "Mar", "Projected Revenue ($)": Math.round(projectedRevenue * 0.5), "Proposal Success (%)": Math.round(successRate * 0.7) },
-    { month: "Apr", "Projected Revenue ($)": Math.round(projectedRevenue * 0.7), "Proposal Success (%)": Math.round(successRate * 0.8) },
-    { month: "May", "Projected Revenue ($)": Math.round(projectedRevenue * 0.85), "Proposal Success (%)": Math.round(successRate * 0.9) },
-    { month: "Jun", "Projected Revenue ($)": projectedRevenue, "Proposal Success (%)": successRate }
-  ];
+  const todayDate = new Date();
+  const todayDay = todayDate.getDate();
+  const todayMonth = todayDate.toLocaleString('default', { month: 'short' });
 
   return (
-    <div className="space-y-6 text-left">
+    <div className="space-y-6 text-left font-sans">
       
-      {/* Overview Stat Widgets */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* 5-Column Overview Stat Widgets */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-5">
         
-        {/* KPI: Active pipeline */}
-        <Card className="bg-[#0F0F0F] border border-zinc-800 rounded-none p-5 space-y-2">
-          <div className="flex items-center justify-between text-zinc-500">
-            <span className="text-[10px] uppercase font-bold tracking-wider">Active CRM Leads</span>
-            <Users className="w-4 h-4 text-[#C9A84C]" />
-          </div>
-          <div className="space-y-1">
-            <h3 className="text-3xl font-cinzel font-bold text-white">{activePipelineCount}</h3>
-            <p className="text-[10px] text-zinc-600">Total accounts saved in CRM</p>
-          </div>
-        </Card>
-
-        {/* KPI: Hot leads */}
-        <Card className="bg-[#0F0F0F] border border-zinc-800 rounded-none p-5 space-y-2">
-          <div className="flex items-center justify-between text-zinc-500">
-            <span className="text-[10px] uppercase font-bold tracking-wider">HOT Opportunities</span>
-            <Flame className="w-4 h-4 text-red-500 animate-pulse" />
-          </div>
-          <div className="space-y-1">
-            <h3 className="text-3xl font-cinzel font-bold text-white">{hotLeadsCount}</h3>
-            <p className="text-[10px] text-zinc-600">High priority targets (Score &lt; 60)</p>
+        {/* Card 1: Total Leads */}
+        <Card className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Leads</span>
+              <h3 className="text-3xl font-extrabold text-slate-800">{totalLeads}</h3>
+            </div>
+            <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center text-orange-500">
+              <Users className="w-5 h-5" />
+            </div>
           </div>
         </Card>
 
-        {/* KPI: Projected Revenue */}
-        <Card className="bg-[#0F0F0F] border border-zinc-800 rounded-none p-5 space-y-2">
-          <div className="flex items-center justify-between text-zinc-500">
-            <span className="text-[10px] uppercase font-bold tracking-wider">Projected Revenue</span>
-            <DollarSign className="w-4 h-4 text-green-500" />
-          </div>
-          <div className="space-y-1">
-            <h3 className="text-3xl font-cinzel font-bold text-white">
-              ${projectedRevenue.toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo
-            </h3>
-            <p className="text-[10px] text-zinc-600">Proposed contracts & closed client MRR</p>
+        {/* Card 2: Qualified */}
+        <Card className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Qualified</span>
+              <h3 className="text-3xl font-extrabold text-slate-800">{qualifiedCount}</h3>
+            </div>
+            <div className="w-10 h-10 rounded-xl bg-cyan-50 flex items-center justify-center text-cyan-500">
+              <Check className="w-5 h-5" />
+            </div>
           </div>
         </Card>
 
-        {/* KPI: Conversion Rate */}
-        <Card className="bg-[#0F0F0F] border border-zinc-800 rounded-none p-5 space-y-2">
-          <div className="flex items-center justify-between text-zinc-500">
-            <span className="text-[10px] uppercase font-bold tracking-wider">Proposal Success</span>
-            <TrendingUp className="w-4 h-4 text-sky-400" />
+        {/* Card 3: Demo Sites */}
+        <Card className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Demo Sites</span>
+              <h3 className="text-3xl font-extrabold text-slate-800">{demoSitesCount}</h3>
+            </div>
+            <div className="w-10 h-10 rounded-xl bg-yellow-50 flex items-center justify-center text-yellow-600">
+              <Monitor className="w-5 h-5" />
+            </div>
           </div>
-          <div className="space-y-1">
-            <h3 className="text-3xl font-cinzel font-bold text-white">
-              {crmLeads.length > 0 ? Math.round((closedCount / crmLeads.length) * 100) : 0}%
-            </h3>
-            <p className="text-[10px] text-zinc-600">Closed deals vs total pipeline volume</p>
+        </Card>
+
+        {/* Card 4: Contacted */}
+        <Card className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Contacted</span>
+              <h3 className="text-3xl font-extrabold text-slate-800">{contactedCount}</h3>
+            </div>
+            <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-500">
+              <Mail className="w-5 h-5" />
+            </div>
+          </div>
+        </Card>
+
+        {/* Card 5: Replied */}
+        <Card className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Replied</span>
+              <h3 className="text-3xl font-extrabold text-slate-800">{repliedCount}</h3>
+            </div>
+            <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-500">
+              <MessageSquareCode className="w-5 h-5" />
+            </div>
           </div>
         </Card>
 
       </div>
 
-      {/* Background Lead Finder Console Controls */}
-      <Card className="bg-[#0F0F0F] border border-[#C9A84C]/15 rounded-none p-5">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <h4 className="font-cinzel text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
-              <Activity className="w-4 h-4 text-[#C9A84C]" /> Automated Scanner Engine (Background Mode)
-            </h4>
-            <p className="text-xs text-zinc-400 leading-relaxed">
-              When activated, the scraper runs background loops to find and auto-score local prospects, adding them directly to your CRM board.
-            </p>
+      {/* Today Stat Widget Row */}
+      <div className="w-full max-w-[240px]">
+        <Card className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Today</span>
+              <h3 className="text-2xl font-bold text-slate-800">{todayDay} {todayMonth}</h3>
+            </div>
+            <div className="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center text-rose-500">
+              <Calendar className="w-5 h-5" />
+            </div>
           </div>
-          <div className="flex items-center gap-3">
-            <Badge className={`rounded-none px-3 py-1 text-[10px] font-bold ${isAutoFinding ? 'bg-green-500/10 text-green-500 border border-green-500/25' : 'bg-zinc-800 text-zinc-500'}`}>
-              {isAutoFinding ? "Scanner Active" : "Scanner Inactive"}
-            </Badge>
-            <Button
-              onClick={onToggleAutoFinding}
-              className={`rounded-none font-semibold text-xs tracking-wider uppercase px-5 py-2.5 h-auto transition-all ${
-                isAutoFinding 
-                  ? "bg-red-600/10 text-red-500 hover:bg-red-600 hover:text-white border border-red-500/20" 
-                  : "bg-[#C9A84C] text-black hover:bg-white"
-              }`}
-            >
-              {isAutoFinding ? (
-                <><Square className="w-3 h-3 mr-1.5 fill-current" /> Deactivate</>
-              ) : (
-                <><Play className="w-3 h-3 mr-1.5 fill-current" /> Activate Scan</>
-              )}
-            </Button>
-          </div>
-        </div>
-      </Card>
+        </Card>
+      </div>
 
-      {/* Analytics Charts section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Main Bottom Section Grid: Activity vs Quick Actions */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
         
-        {/* Real-time Growth Projection Chart */}
-        <Card className="bg-[#0F0F0F] border border-zinc-800 rounded-none p-5 space-y-4 col-span-1 lg:col-span-2">
-          <CardHeader className="p-0 border-b border-zinc-900 pb-2 flex flex-row items-center justify-between">
-            <CardTitle className="font-cinzel text-xs font-bold text-white uppercase tracking-wider">
-              Projected Revenue & Proposal Success Growth Trend
-            </CardTitle>
-            <Badge className="bg-[#C9A84C]/10 text-[#C9A84C] border border-[#C9A84C]/25 rounded-none text-[9px] uppercase tracking-wider font-semibold">
-              Live Forecast
-            </Badge>
-          </CardHeader>
-          <div className="h-72 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={growthTrendData} margin={{ top: 20, right: 5, left: -20, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#C9A84C" stopOpacity={0.4}/>
-                    <stop offset="95%" stopColor="#C9A84C" stopOpacity={0.0}/>
-                  </linearGradient>
-                  <linearGradient id="colorSuccess" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#38BDF8" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#38BDF8" stopOpacity={0.0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid stroke="#1A1A1A" strokeDasharray="3 3" />
-                <XAxis dataKey="month" stroke="#6b6375" fontSize={10} tickLine={false} />
-                <YAxis yAxisId="left" stroke="#C9A84C" fontSize={10} tickLine={false} />
-                <YAxis yAxisId="right" orientation="right" stroke="#38BDF8" fontSize={10} tickLine={false} />
-                <Tooltip 
-                  contentStyle={{ backgroundColor: "#0A0A0A", borderColor: "#C9A84C", color: "#F5F0E8" }}
-                  itemStyle={{ color: "#C9A84C" }}
-                  labelStyle={{ color: "#FFF" }}
-                />
-                <Legend verticalAlign="top" height={36} wrapperStyle={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: 1 }} />
-                <Area yAxisId="left" type="monotone" dataKey="Projected Revenue ($)" stroke="#C9A84C" fillOpacity={1} fill="url(#colorRevenue)" strokeWidth={2} />
-                <Area yAxisId="right" type="monotone" dataKey="Proposal Success (%)" stroke="#38BDF8" fillOpacity={1} fill="url(#colorSuccess)" strokeWidth={2} />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-
-        {/* Pipeline conversion stages chart */}
-        <Card className="bg-[#0F0F0F] border border-zinc-800 rounded-none p-5 space-y-4">
-          <CardHeader className="p-0 border-b border-zinc-900 pb-2">
-            <CardTitle className="font-cinzel text-xs font-bold text-white uppercase tracking-wider">
-              Pipeline Funnel Distribution
-            </CardTitle>
-          </CardHeader>
-          <div className="h-64 w-full">
-            {crmLeads.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={funnelData} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
-                  <XAxis dataKey="name" stroke="#6b6375" fontSize={10} tickLine={false} />
-                  <YAxis stroke="#6b6375" fontSize={10} tickLine={false} allowDecimals={false} />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: "#0A0A0A", borderColor: "#C9A84C", color: "#F5F0E8" }}
-                    itemStyle={{ color: "#C9A84C" }}
-                    labelStyle={{ color: "#FFF" }}
-                  />
-                  <Bar dataKey="count" radius={[2, 2, 0, 0]}>
-                    {funnelData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.fill} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            ) : (
-              <div className="h-full flex items-center justify-center text-xs text-zinc-500 italic">
-                No pipeline data recorded. Scan and add prospects to initialize chart data.
+        {/* Recent Activity Panel */}
+        <div className="lg:col-span-2 space-y-3">
+          <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest px-1">Recent Activity</h4>
+          
+          <Card className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm min-h-[300px] flex flex-col justify-between">
+            <div className="space-y-4">
+              {logs && logs.length > 0 ? (
+                <div className="space-y-3">
+                  {logs.slice(-6).reverse().map((log, index) => {
+                    let colorClass = "text-slate-600 font-medium";
+                    let badgeColor = "bg-slate-100 text-slate-600";
+                    
+                    if (log.type === "success") {
+                      colorClass = "text-emerald-700 font-semibold";
+                      badgeColor = "bg-emerald-50 text-emerald-700";
+                    }
+                    if (log.type === "warning") {
+                      colorClass = "text-amber-700 font-semibold";
+                      badgeColor = "bg-amber-50 text-amber-700";
+                    }
+                    if (log.type === "error") {
+                      colorClass = "text-rose-600 font-bold";
+                      badgeColor = "bg-rose-50 text-rose-700";
+                    }
+                    if (log.type === "action") {
+                      colorClass = "text-indigo-700 font-semibold";
+                      badgeColor = "bg-indigo-50 text-indigo-700";
+                    }
+                    
+                    return (
+                      <div key={index} className="flex items-start gap-3 text-xs border-b border-slate-50 pb-3 last:border-0 last:pb-0">
+                        <span className="text-[10px] text-slate-400 font-mono select-none bg-slate-50 border border-slate-100 rounded px-1.5 py-0.5 shrink-0">
+                          {log.timestamp}
+                        </span>
+                        <div className="flex-1 text-left">
+                          <span className={colorClass}>{log.text}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="py-20 text-center text-xs text-slate-400 italic">
+                  No activity yet
+                </div>
+              )}
+            </div>
+            
+            <div className="border-t border-slate-100 pt-3 flex items-center justify-between text-[11px] text-slate-400 font-medium">
+              <span>Database Sync Active</span>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+                <span>Connected</span>
               </div>
-            )}
-          </div>
-        </Card>
+            </div>
+          </Card>
+        </div>
 
-        {/* Site performance stats chart */}
-        <Card className="bg-[#0F0F0F] border border-zinc-800 rounded-none p-5 space-y-4">
-          <CardHeader className="p-0 border-b border-zinc-900 pb-2">
-            <CardTitle className="font-cinzel text-xs font-bold text-white uppercase tracking-wider">
-              Audited Clients Speed vs SEO
-            </CardTitle>
-          </CardHeader>
-          <div className="h-64 w-full">
-            {speedData.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={speedData} margin={{ top: 20, right: 10, left: -25, bottom: 0 }}>
-                  <CartesianGrid stroke="#1A1A1A" strokeDasharray="3 3" />
-                  <XAxis dataKey="name" stroke="#6b6375" fontSize={9} />
-                  <YAxis stroke="#6b6375" fontSize={10} domain={[0, 100]} />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: "#0A0A0A", borderColor: "#C9A84C", color: "#F5F0E8" }}
-                    itemStyle={{ color: "#C9A84C" }}
-                    labelStyle={{ color: "#FFF" }}
-                  />
-                  <Line type="monotone" dataKey="speed" name="PageSpeed" stroke="#EF4444" strokeWidth={2} activeDot={{ r: 6 }} />
-                  <Line type="monotone" dataKey="seo" name="SEO" stroke="#38BDF8" strokeWidth={2} />
-                </LineChart>
-              </ResponsiveContainer>
-            ) : (
-              <div className="h-full flex items-center justify-center text-xs text-zinc-500 italic">
-                No technical speed records. Run One-Click AI Audits on active prospects.
+        {/* Quick Actions Panel */}
+        <div className="lg:col-span-1 space-y-3">
+          <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest px-1">Quick Actions</h4>
+
+          <Card className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-3.5">
+            
+            {/* Action 1: Find New Leads */}
+            <button 
+              onClick={onNavigateToFinder}
+              className="w-full text-left p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200/60 rounded-xl transition-all duration-200 group flex items-center justify-between"
+            >
+              <div className="space-y-0.5">
+                <span className="text-xs font-bold text-slate-800 block group-hover:text-indigo-600 transition-colors">Find New Leads</span>
+                <span className="text-[10px] text-slate-400 block">Scrape by location</span>
               </div>
-            )}
-          </div>
-        </Card>
+              <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 group-hover:text-indigo-600 transition-all" />
+            </button>
+            
+            {/* Action 2: AI Score All */}
+            <button 
+              onClick={onToggleAutoFinding}
+              className="w-full text-left p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200/60 rounded-xl transition-all duration-200 group flex items-center justify-between"
+            >
+              <div className="space-y-0.5">
+                <span className="text-xs font-bold text-slate-800 group-hover:text-indigo-600 transition-colors flex items-center gap-1.5">
+                  AI Score All
+                  <span className={`w-2 h-2 rounded-full ${isAutoFinding ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`} />
+                </span>
+                <span className="text-[10px] text-slate-400 block">{isAutoFinding ? "Scraper running loop..." : "Analyze & rank leads"}</span>
+              </div>
+              <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 group-hover:text-indigo-600 transition-all" />
+            </button>
+
+            {/* Action 3: Build All Demos */}
+            <button 
+              onClick={() => alert("Website mockup generation triggered for all closed accounts!")}
+              className="w-full text-left p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200/60 rounded-xl transition-all duration-200 group flex items-center justify-between"
+            >
+              <div className="space-y-0.5">
+                <span className="text-xs font-bold text-slate-800 block group-hover:text-indigo-600 transition-colors">Build All Demos</span>
+                <span className="text-[10px] text-slate-400 block">Generate websites</span>
+              </div>
+              <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 group-hover:text-indigo-600 transition-all" />
+            </button>
+
+            {/* Action 4: Launch Outreach */}
+            <button 
+              onClick={onNavigateToFinder} // Switches to finder/outreach options
+              className="w-full text-left p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200/60 rounded-xl transition-all duration-200 group flex items-center justify-between"
+            >
+              <div className="space-y-0.5">
+                <span className="text-xs font-bold text-slate-800 block group-hover:text-indigo-600 transition-colors">Launch Outreach</span>
+                <span className="text-[10px] text-slate-400 block">Send email campaigns</span>
+              </div>
+              <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 group-hover:text-indigo-600 transition-all" />
+            </button>
+
+          </Card>
+        </div>
 
       </div>
       
     </div>
   );
 });
-
-// Mock component helper for cell mappings inside charts
-function Cell(props: any) {
-  const { fill, x, y, width, height, radius } = props;
-  return (
-    <rect 
-      x={x} 
-      y={y} 
-      width={width} 
-      height={height} 
-      fill={fill} 
-      rx={radius?.[0] || 0} 
-      ry={radius?.[1] || 0} 
-    />
-  );
-}

@@ -5,8 +5,8 @@ import { parseJsonBlock } from "./utils";
 import API from "../../config/api";
 
 export function useLeadGen() {
-  // Navigation tab state: "dashboard" | "finder" | "crm" | "calendar" | "users"
-  const [activeTab, setActiveTab] = useState<"dashboard" | "finder" | "crm" | "calendar" | "users">("dashboard");
+  // Navigation tab state: "dashboard" | "finder" | "crm" | "calendar" | "users" | "demos" | "outreach" | "campaigns" | "activity" | "scout" | "reports" | "settings"
+  const [activeTab, setActiveTab] = useState<"dashboard" | "finder" | "crm" | "calendar" | "users" | "demos" | "outreach" | "campaigns" | "activity" | "scout" | "reports" | "settings">("dashboard");
 
   // Form search states
   const [industry, setIndustry] = useState("");
@@ -238,8 +238,8 @@ export function useLeadGen() {
       addLog(`✅ Sandbox: Found 3 businesses. Trigger audits to add them to your CRM board.`, "success");
     } else {
       try {
-        const places = await callGooglePlaces(industry, location, addLog);
-        const formatted: ScoredLead[] = places.map((p, idx) => ({
+        const result = await callGooglePlaces(industry, location, addLog);
+        const formatted: ScoredLead[] = result.leads.map((p, idx) => ({
           id: p.id || `osm-${idx}-${(p.latitude || '').replace(/\./g, '')}-${(p.longitude || '').replace(/\./g, '')}-${Math.floor(Math.random() * 1000)}`,
           name: p.name || "Unknown Name",
           rating: p.rating || null,
@@ -251,11 +251,20 @@ export function useLeadGen() {
           outreachMessage: "",
           status: "NEW",
           notes: [],
-          auditProgress: "idle"
+          auditProgress: "idle",
+          isMock: !!p.isMock,
+          ratingSource: p.ratingSource || "estimated"
         }));
         setSearchResults(formatted);
         setHasSearched(true);
-        addLog(`✅ Search Complete. Found ${formatted.length} businesses. Click 'One-Click Audit' to scrape sites and score.`, "success");
+        
+        if (result.geocodeFailed) {
+          addLog("⚠️ Location not recognized. Showing estimated sample listings.", "warning");
+        } else if (result.source === "mock") {
+          addLog("ℹ️ Showing simulated business listings.", "info");
+        } else {
+          addLog(`✅ Search Complete. Found ${formatted.length} businesses. Click 'One-Click Audit' to scrape sites and score.`, "success");
+        }
       } catch (err: any) {
         setHasSearched(true);
         addLog(`❌ Search Failed: ${err.message || err}`, "error");

@@ -41,7 +41,7 @@
 @layer base {
   * {
     @apply border-border;
-    border-radius: 0px !important; /* Enforce strict sharp corners for premium aesthetic */
+    border-radius: 0px; /* Enforce strict sharp corners by default */
   }
 
   html {
@@ -108,4 +108,90 @@
 @keyframes typing-cursor {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  width: max-content;
+  animation: marquee 20s linear infinite;
+}
+
+/* Light console overrides for LeadGen dashboard */
+.light-console {
+  --background: 210 40% 98%; /* #F8FAFC */
+  --foreground: 222 47% 11%; /* #0F172A */
+
+  --card: 0 0% 100%; /* #FFFFFF */
+  --card-foreground: 222 47% 11%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+
+  --primary: 262 83% 58%; /* Purple color like #7C3AED / LeadEmpire */
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222 47% 11.2%;
+
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222 47% 11.2%;
+
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+
+  --border: 214.3 31.8% 91.4%; /* Light gray border */
+  --input: 214.3 31.8% 91.4%;
+  --ring: 262 83% 58%;
+}
+
+.light-console .glass {
+  background: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+  color: #0F172A !important;
+}
+
+.light-console input, 
+.light-console select, 
+.light-console textarea {
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+  border-color: #E2E8F0 !important;
+}
+
+.light-console table {
+  color: #334155 !important;
+}
+
+.light-console th {
+  color: #64748B !important;
+  border-color: #E2E8F0 !important;
+}
+
+.light-console td {
+  border-color: #E2E8F0 !important;
+}
+
+.light-console tr:hover {
+  background-color: rgba(241, 245, 249, 0.6) !important;
+}
+
+.light-console h1, 
+.light-console h2, 
+.light-console h3, 
+.light-console h4, 
+.light-console h5, 
+.light-console h6 {
+  color: #0F172A !important;
 }

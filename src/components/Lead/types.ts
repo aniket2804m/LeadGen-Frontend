@@ -220,6 +220,8 @@ export interface ScoredLead {
   email?: string;
   auditData?: AuditData;
   auditProgress?: "idle" | "scraping" | "speedtest" | "analyzing" | "completed" | "failed";
+  isMock?: boolean;
+  ratingSource?: "estimated" | "verified";
   updatedAt?: string;
   priorityScore?: number;
 }

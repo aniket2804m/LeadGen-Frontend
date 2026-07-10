@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import LeadGenAgent from "./components/Lead/LeadGenAgent";
 import UserHome from "./components/Lead/UserHome";
@@ -23,8 +23,9 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   );
 };
 
-function App() {
+function AppContent() {
   const [role, setRole] = useState(localStorage.getItem("role") || "");
+  const location = useLocation();
 
   // Listen for role updates
   useEffect(() => {
@@ -35,25 +36,33 @@ function App() {
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
+  const isConsole = location.pathname === "/console";
+
+  return (
+    <main className={`min-h-screen ${isConsole ? "bg-[#F8FAFC]" : "bg-[#0A0A0A]"}`}>
+      {!isConsole && <Navbar />}
+      <Routes>
+        <Route path="/" element={<UserHome />} />
+        <Route path="/login" element={<Login setRole={setRole} />} />
+        <Route path="/register" element={<Register />} />
+        <Route
+          path="/console"
+          element={
+            <ProtectedRoute>
+              {role === "admin" ? <LeadGenAgent /> : <Navigate to="/" replace />}
+            </ProtectedRoute>
+          }
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </main>
+  );
+}
+
+function App() {
   return (
     <Router>
-      <main className="min-h-screen bg-[#0A0A0A]">
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<UserHome />} />
-          <Route path="/login" element={<Login setRole={setRole} />} />
-          <Route path="/register" element={<Register />} />
-          <Route
-            path="/console"
-            element={
-              <ProtectedRoute>
-                {role === "admin" ? <LeadGenAgent /> : <Navigate to="/" replace />}
-              </ProtectedRoute>
-            }
-          />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </main>
+      <AppContent />
     </Router>
   );
 }

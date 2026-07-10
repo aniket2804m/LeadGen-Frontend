@@ -28,7 +28,7 @@ export default function CRMCard({ lead, onInspect, onStatusChange, onDelete }: C
     >
       <div className="space-y-2">
         <div className="flex items-start justify-between gap-1">
-          <h4 className="font-cinzel text-xs text-white uppercase tracking-wider font-semibold truncate flex-1 text-left">
+          <h4 className="font-cinzel text-xs text-white bg-white uppercase tracking-wider font-semibold truncate flex-1 text-left">
             {lead.name}
           </h4>
           {hasAudit && (
