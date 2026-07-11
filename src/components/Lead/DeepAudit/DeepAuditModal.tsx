@@ -76,10 +76,10 @@ export default function DeepAuditModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-0 sm:p-4 animate-fadeIn">
-      <div className="bg-[#050505] border border-zinc-800 w-full sm:max-w-5xl h-full sm:h-[92vh] flex flex-col justify-between rounded-none shadow-[0_0_50px_rgba(0,0,0,0.8)] overflow-hidden font-sans">
+      <div className="bg-white border border-zinc-800 w-full sm:max-w-5xl h-full sm:h-[92vh] flex flex-col justify-between rounded-none shadow-[0_0_50px_rgba(0,0,0,0.8)] overflow-hidden font-sans">
         
         {/* Modal Header */}
-        <div className="p-4 border-b border-zinc-900 bg-[#0A0A0A] flex items-center justify-between">
+        <div className="p-4 border-b border-zinc-900 bg-white flex items-center justify-between">
           <div className="space-y-1 text-left min-w-0 flex-1 pr-4">
             <div className="flex flex-wrap items-center gap-2">
               <h3 className="font-cinzel text-sm sm:text-base md:text-lg text-white uppercase tracking-wider font-semibold truncate max-w-[200px] sm:max-w-sm">
@@ -111,7 +111,7 @@ export default function DeepAuditModal({
         </div>
 
         {/* Modal Tab Controls (Mobile Scrollable) */}
-        <div className="flex overflow-x-auto whitespace-nowrap border-b border-zinc-900 bg-[#090909] text-xs scrollbar-none flex-nowrap shrink-0">
+        <div className="flex overflow-x-auto whitespace-nowrap border-b border-zinc-900 bg-white text-xs scrollbar-none flex-nowrap shrink-0">
           {(["overview", "googleGbp", "technical", "social", "competitor", "proposal", "outreach", "meetings", "billing"] as TabType[]).map((tab) => {
             let label = tab as string;
             if (tab === "overview") label = "Overview";

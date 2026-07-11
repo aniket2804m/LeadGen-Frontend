@@ -7,6 +7,16 @@ function Navbar() {
   const [accountDropdown, setAccountDropdown] = useState(false);
   const navigate = useNavigate();
 
+const handleHowWork = () => {
+  navigate("/");
+
+  setTimeout(() => {
+    document
+      .getElementById("howwork")
+      ?.scrollIntoView({ behavior: "smooth" });
+  }, 100);
+};
+
   const role = localStorage.getItem("role");
   const token = localStorage.getItem("token");
 
@@ -41,25 +51,43 @@ function Navbar() {
           
           {/* LOGO */}
           <div className="flex items-center gap-2">
-            <Link to="/" className="flex items-center gap-2 text-white font-cinzel font-bold tracking-widest text-lg sm:text-xl uppercase gold-text-glow">
+            <Link to="/" onClick={() =>
+    document
+      .getElementById("home")
+      ?.scrollIntoView({ behavior: "smooth" })
+  } className="flex items-center gap-2 text-white font-cinzel font-bold tracking-widest text-lg sm:text-xl uppercase gold-text-glow">
               <Shield className="w-5 h-5 text-[#C9A84C] animate-pulse" />
-              <span>Agency OS</span>
+              <span>Purnova Lead</span>
             </Link>
           </div>
 
           {/* DESKTOP NAV LINKS */}
           <div className="hidden md:flex items-center gap-8">
-            <Link
-              to="/"
-              className="text-[11px] font-semibold uppercase tracking-widest text-[#F5F0E8]/70 hover:text-[#C9A84C] transition-colors"
-            >
-              Home
-            </Link>
+           <button
+  onClick={() =>
+    document
+      .getElementById("home")
+      ?.scrollIntoView({ behavior: "smooth" })
+  }
+>
+  Home
+</button>
+
+
+            <button
+  onClick={() =>
+    document
+      .getElementById("howwork")
+      ?.scrollIntoView({ behavior: "smooth" })
+  }
+>
+  How it works
+</button>
 
             {role === "admin" && (
               <Link
                 to="/console"
-                className="text-[11px] font-semibold uppercase tracking-widest text-[#F5F0E8]/70 hover:text-[#C9A84C] transition-colors"
+                className="text-[15px] font-semibold uppercase tracking-widest text-[#F5F0E8]/70 hover:text-[#C9A84C] transition-colors"
               >
                 ✦ Admin Console
               </Link>

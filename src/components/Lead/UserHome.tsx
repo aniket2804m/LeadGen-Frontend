@@ -7,11 +7,15 @@ const UserHome = () => {
   return (
     <div className="mt-10">
       
+      <section id="home">
       <Home />
+      </section>
 
       <Slide />
 
-      <HowWorks />
+<section id="howwork"> 
+  <HowWorks />
+</section>
 
     </div>
   )

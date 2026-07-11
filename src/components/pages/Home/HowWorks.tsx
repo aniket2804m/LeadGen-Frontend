@@ -50,7 +50,7 @@ const HowWorks = () => {
       <div className="max-w-7xl mx-auto px-5 lg:px-8">
         {/* Heading */}
         <span className="text-xs font-bold uppercase tracking-[3px] text-violet-600">
-          How LeadEmpire Works
+          How Purnova Lead Works
         </span>
 
         <h2 className="mt-4 text-4xl md:text-5xl font-bold text-slate-900 leading-tight max-w-3xl">

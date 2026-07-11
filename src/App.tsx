@@ -5,6 +5,7 @@ import UserHome from "./components/Lead/UserHome";
 import Login from "./components/Auth/Login";
 import Register from "./components/Auth/Register";
 import Navbar from "./components/Navbar/Navbar";
+import HowWork from "./components/pages/Home/HowWorks";
 import "./App.css";
 
 interface ProtectedRouteProps {
@@ -45,6 +46,7 @@ function AppContent() {
         <Route path="/" element={<UserHome />} />
         <Route path="/login" element={<Login setRole={setRole} />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/howwork" element={<HowWork />} />
         <Route
           path="/console"
           element={

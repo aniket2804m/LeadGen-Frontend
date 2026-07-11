@@ -7,6 +7,8 @@ import {
   FileText,
 } from "lucide-react";
 
+import { useNavigate } from "react-router-dom";
+
 const leads = [
   {
     name: "MyFitMantra Gym",
@@ -41,6 +43,18 @@ const leads = [
 ];
 
 const Home = () => {
+
+  const navigate = useNavigate();
+
+const handleHowWork = () => {
+  navigate("/");
+
+  setTimeout(() => {
+    document
+      .getElementById("howwork")
+      ?.scrollIntoView({ behavior: "smooth" });
+  }, 100);
+};
   return (
     <section className="min-h-screen bg-[#faf9fc] flex items-center">
       <div className="max-w-7xl mx-auto px-6 lg:px-10 py-16">
@@ -81,7 +95,11 @@ const Home = () => {
                 <ArrowRight size={18} />
               </button>
 
-              <button className="bg-black border border-gray-200 hover:border-violet-300 px-8 py-4 rounded-xl font-medium flex items-center justify-center gap-2 shadow-sm">
+              <button  onClick={() =>
+    document
+      .getElementById("howwork")
+      ?.scrollIntoView({ behavior: "smooth" })
+  } className="bg-black border border-gray-200 hover:border-violet-300 px-8 py-4 rounded-xl font-medium flex items-center justify-center gap-2 shadow-sm">
                 <PlayCircle size={18} />
                 See how it works
               </button>
