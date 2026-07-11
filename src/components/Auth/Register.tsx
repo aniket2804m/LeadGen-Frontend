@@ -98,7 +98,7 @@ const Register = () => {
       <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full bg-[#C9A84C]/3 blur-[130px] pointer-events-none" />
 
       {/* Glassmorphism Card */}
-      <div className="w-full max-w-md p-8 glass border border-[#C9A84C]/15 relative z-10 shadow-2xl animate-[fadeIn_0.6s_ease-out] flex flex-col items-center">
+      <div className="w-full max-w-md p-8 bg-[#0F0F0F]/95 border border-[#C9A84C]/15 relative z-10 shadow-2xl animate-[fadeIn_0.6s_ease-out] flex flex-col items-center backdrop-blur-md">
         
         {/* Shield Icon Badge */}
         <div className="flex items-center justify-center w-12 h-12 border border-[#C9A84C]/25 bg-black/60 mb-6">

@@ -88,7 +88,7 @@ const Home = () => {
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-8 mt-14">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 mt-14">
               <div>
                 <h2 className="text-3xl font-bold text-slate-900">40+</h2>
                 <p className="uppercase tracking-wider text-xs text-gray-400 mt-2">
@@ -182,18 +182,18 @@ const Home = () => {
                 </div>
 
                 {/* Bottom Buttons */}
-                <div className="grid grid-cols-3 gap-3 mt-6">
-                  <button className="rounded-xl bg-orange-100 text-orange-700 py-3 text-sm font-semibold flex items-center justify-center gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 mt-6">
+                  <button className="rounded-xl bg-orange-100 text-orange-700 py-3 text-xs sm:text-sm font-semibold flex items-center justify-center gap-2">
                     <Globe size={16} />
                     Build Demos
                   </button>
 
-                  <button className="rounded-xl bg-sky-100 text-sky-700 py-3 text-sm font-semibold flex items-center justify-center gap-2">
+                  <button className="rounded-xl bg-sky-100 text-sky-700 py-3 text-xs sm:text-sm font-semibold flex items-center justify-center gap-2">
                     <Send size={16} />
                     Send Outreach
                   </button>
 
-                  <button className="rounded-xl bg-green-100 text-green-700 py-3 text-sm font-semibold flex items-center justify-center gap-2">
+                  <button className="rounded-xl bg-green-100 text-green-700 py-3 text-xs sm:text-sm font-semibold flex items-center justify-center gap-2">
                     <FileText size={16} />
                     AI Report
                   </button>

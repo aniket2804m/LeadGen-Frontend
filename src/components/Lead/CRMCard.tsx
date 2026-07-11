@@ -24,22 +24,22 @@ export default function CRMCard({ lead, onInspect, onStatusChange, onDelete }: C
     <Card 
       draggable
       onDragStart={handleDragStart}
-      className="bg-[#0A0A0A] border border-zinc-800 rounded-none p-3.5 space-y-3 hover:border-[#C9A84C]/50 transition-colors flex flex-col justify-between cursor-grab active:cursor-grabbing"
+      className="bg-card text-card-foreground border border-border rounded-none p-3.5 space-y-3 hover:border-[#C9A84C]/50 transition-colors flex flex-col justify-between cursor-grab active:cursor-grabbing min-w-0 w-full overflow-hidden"
     >
-      <div className="space-y-2">
-        <div className="flex items-start justify-between gap-1">
-          <h4 className="font-cinzel text-xs text-white bg-white uppercase tracking-wider font-semibold truncate flex-1 text-left">
+      <div className="space-y-2 min-w-0">
+        <div className="flex items-start justify-between gap-1 min-w-0">
+          <h4 className="font-cinzel text-xs text-card-foreground uppercase tracking-wider font-semibold truncate flex-1 text-left">
             {lead.name}
           </h4>
           {hasAudit && (
-            <span className={`text-[10px] font-bold ${(lead.auditScore || 0) < 60 ? 'text-[#F5C518]' : 'text-green-500'}`}>
+            <span className={`text-[10px] font-bold ${(lead.auditScore || 0) < 60 ? 'text-[#F5C518]' : 'text-green-500'} shrink-0`}>
               {lead.auditScore}/100
             </span>
           )}
         </div>
 
         {/* Contacts */}
-        <div className="space-y-1 text-[10px] text-[#F5F0E8]/50 text-left">
+        <div className="space-y-1 text-[10px] text-muted-foreground text-left min-w-0">
           <p className="truncate">📍 {lead.address}</p>
           {lead.website && <p className="truncate">🌐 {lead.website}</p>}
           {lead.phoneNumber && <p>📞 {lead.phoneNumber}</p>}

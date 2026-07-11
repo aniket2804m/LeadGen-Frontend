@@ -32,7 +32,7 @@ export default React.memo(function FinderForm({
   onSubmit,
 }: FinderFormProps) {
   return (
-    <div className="glass p-6 md:p-8 space-y-6 text-left">
+    <div className="glass p-4 sm:p-6 md:p-8 space-y-6 text-left">
       <div className="flex items-center justify-between border-b border-[#C9A84C]/15 pb-3">
         <h2 className="font-cinzel text-base text-white uppercase tracking-wider font-semibold">
           Find Prospects

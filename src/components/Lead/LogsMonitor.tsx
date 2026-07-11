@@ -15,7 +15,7 @@ export default function LogsMonitor({ logs }: LogsMonitorProps) {
   if (logs.length === 0) return null;
 
   return (
-    <div className="glass border border-[#C9A84C]/20 p-5 space-y-3 shadow-2xl">
+    <div className="glass border border-[#C9A84C]/20 p-4 sm:p-5 space-y-3 shadow-2xl">
       <div className="flex items-center justify-between border-b border-[#C9A84C]/15 pb-2">
         <span className="font-cinzel text-xs text-white uppercase tracking-wider font-semibold">
           OS Engine Status Monitor

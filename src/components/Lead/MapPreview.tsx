@@ -2,15 +2,30 @@ import React from "react";
 import { MapPin } from "lucide-react";
 
 interface MapPreviewProps {
-  lat: number;
-  lng: number;
+  lat?: number;
+  lng?: number;
+  address?: string;
+  businessName?: string;
 }
 
 export default React.memo(function MapPreview({
   lat,
   lng,
+  address,
+  businessName,
 }: MapPreviewProps) {
-  const embedUrl = `https://maps.google.com/maps?q=${lat},${lng}&z=16&output=embed`;
+  let query = "";
+  if (businessName && address) {
+    query = `${businessName}, ${address}`;
+  } else if (address) {
+    query = address;
+  } else if (lat && lng) {
+    query = `${lat},${lng}`;
+  } else {
+    query = "Pune, Maharashtra, India";
+  }
+
+  const embedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(query)}&z=16&output=embed`;
 
   return (
     <div className="space-y-2 text-left">

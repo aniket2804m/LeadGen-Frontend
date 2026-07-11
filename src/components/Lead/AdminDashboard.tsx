@@ -53,7 +53,7 @@ export default React.memo(function AdminDashboard({
       <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-5">
         
         {/* Card 1: Total Leads */}
-        <Card className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm">
+        <Card className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Leads</span>
@@ -66,7 +66,7 @@ export default React.memo(function AdminDashboard({
         </Card>
 
         {/* Card 2: Qualified */}
-        <Card className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm">
+        <Card className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Qualified</span>
@@ -79,7 +79,7 @@ export default React.memo(function AdminDashboard({
         </Card>
 
         {/* Card 3: Demo Sites */}
-        <Card className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm">
+        <Card className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Demo Sites</span>
@@ -92,7 +92,7 @@ export default React.memo(function AdminDashboard({
         </Card>
 
         {/* Card 4: Contacted */}
-        <Card className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm">
+        <Card className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Contacted</span>
@@ -105,7 +105,7 @@ export default React.memo(function AdminDashboard({
         </Card>
 
         {/* Card 5: Replied */}
-        <Card className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm">
+        <Card className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Replied</span>
@@ -121,7 +121,7 @@ export default React.memo(function AdminDashboard({
 
       {/* Today Stat Widget Row */}
       <div className="w-full max-w-[240px]">
-        <Card className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+        <Card className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Today</span>
@@ -141,7 +141,7 @@ export default React.memo(function AdminDashboard({
         <div className="lg:col-span-2 space-y-3">
           <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest px-1">Recent Activity</h4>
           
-          <Card className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm min-h-[300px] flex flex-col justify-between">
+          <Card className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 shadow-sm min-h-[300px] flex flex-col justify-between">
             <div className="space-y-4">
               {logs && logs.length > 0 ? (
                 <div className="space-y-3">
@@ -199,12 +199,12 @@ export default React.memo(function AdminDashboard({
         <div className="lg:col-span-1 space-y-3">
           <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest px-1">Quick Actions</h4>
 
-          <Card className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-3.5">
+          <Card className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3 sm:space-y-3.5">
             
             {/* Action 1: Find New Leads */}
             <button 
               onClick={onNavigateToFinder}
-              className="w-full text-left p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200/60 rounded-xl transition-all duration-200 group flex items-center justify-between"
+              className="w-full text-left p-3 sm:p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200/60 rounded-xl transition-all duration-200 group flex items-center justify-between"
             >
               <div className="space-y-0.5">
                 <span className="text-xs font-bold text-slate-800 block group-hover:text-indigo-600 transition-colors">Find New Leads</span>
@@ -216,7 +216,7 @@ export default React.memo(function AdminDashboard({
             {/* Action 2: AI Score All */}
             <button 
               onClick={onToggleAutoFinding}
-              className="w-full text-left p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200/60 rounded-xl transition-all duration-200 group flex items-center justify-between"
+              className="w-full text-left p-3 sm:p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200/60 rounded-xl transition-all duration-200 group flex items-center justify-between"
             >
               <div className="space-y-0.5">
                 <span className="text-xs font-bold text-slate-800 group-hover:text-indigo-600 transition-colors flex items-center gap-1.5">
@@ -231,7 +231,7 @@ export default React.memo(function AdminDashboard({
             {/* Action 3: Build All Demos */}
             <button 
               onClick={() => alert("Website mockup generation triggered for all closed accounts!")}
-              className="w-full text-left p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200/60 rounded-xl transition-all duration-200 group flex items-center justify-between"
+              className="w-full text-left p-3 sm:p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200/60 rounded-xl transition-all duration-200 group flex items-center justify-between"
             >
               <div className="space-y-0.5">
                 <span className="text-xs font-bold text-slate-800 block group-hover:text-indigo-600 transition-colors">Build All Demos</span>
@@ -243,7 +243,7 @@ export default React.memo(function AdminDashboard({
             {/* Action 4: Launch Outreach */}
             <button 
               onClick={onNavigateToFinder} // Switches to finder/outreach options
-              className="w-full text-left p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200/60 rounded-xl transition-all duration-200 group flex items-center justify-between"
+              className="w-full text-left p-3 sm:p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200/60 rounded-xl transition-all duration-200 group flex items-center justify-between"
             >
               <div className="space-y-0.5">
                 <span className="text-xs font-bold text-slate-800 block group-hover:text-indigo-600 transition-colors">Launch Outreach</span>

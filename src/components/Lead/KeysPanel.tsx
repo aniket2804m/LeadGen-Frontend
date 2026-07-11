@@ -12,7 +12,7 @@ interface KeysPanelProps {
 
 export default React.memo(function KeysPanel({}: KeysPanelProps) {
   return (
-    <div className="glass border border-[#C9A84C]/20 p-5 space-y-3 animate-fadeIn text-left">
+    <div className="glass border border-[#C9A84C]/20 p-4 sm:p-5 space-y-3 animate-fadeIn text-left">
       <h3 className="font-cinzel text-xs uppercase tracking-wider font-semibold text-white flex items-center gap-2">
         <Key className="w-4 h-4 text-[#C9A84C]" /> Secure Environment Configuration
       </h3>

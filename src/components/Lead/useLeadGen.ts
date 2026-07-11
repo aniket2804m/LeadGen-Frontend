@@ -6,7 +6,7 @@ import API from "../../config/api";
 
 export function useLeadGen() {
   // Navigation tab state: "dashboard" | "finder" | "crm" | "calendar" | "users" | "demos" | "outreach" | "campaigns" | "activity" | "scout" | "reports" | "settings"
-  const [activeTab, setActiveTab] = useState<"dashboard" | "finder" | "crm" | "calendar" | "users" | "demos" | "outreach" | "campaigns" | "activity" | "scout" | "reports" | "settings">("dashboard");
+  const [activeTab, setActiveTab] = useState<"dashboard" | "finder" | "crm" | "calendar" | "users" | "demos" | "outreach" | "campaigns" | "activity" | "scout" | "reports" | "settings" | "deepaudit">("dashboard");
 
   // Form search states
   const [industry, setIndustry] = useState("");

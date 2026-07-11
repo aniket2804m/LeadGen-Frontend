@@ -125,8 +125,8 @@ export default React.memo(function InvoiceTab({
       {/* Invoices list */}
       <div className="space-y-3">
         {clientInvoices.map((inv) => (
-          <div key={inv.id} className="bg-black p-4 border border-zinc-850 flex items-center justify-between gap-4 text-xs font-mono">
-            <div className="space-y-1 flex-1">
+          <div key={inv.id} className="bg-black p-4 border border-zinc-850 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs font-mono text-left">
+            <div className="space-y-1 flex-1 min-w-0">
               <div className="flex items-center gap-3">
                 <span className="text-white font-bold">{inv.invoiceNumber}</span>
                 <span className={`px-2 py-0.5 text-[9px] font-bold ${
@@ -139,7 +139,7 @@ export default React.memo(function InvoiceTab({
               <p className="text-[10px] text-zinc-600">Due Date: {new Date(inv.dueDate).toLocaleDateString()}</p>
             </div>
 
-            <div className="flex items-center gap-6">
+            <div className="flex items-center justify-between sm:justify-start gap-4 sm:gap-6 border-t sm:border-t-0 border-zinc-900/60 pt-3 sm:pt-0 w-full sm:w-auto">
               <span className="text-[#C9A84C] font-bold text-sm">${inv.amount.toLocaleString()}</span>
               
               <div className="flex gap-2">

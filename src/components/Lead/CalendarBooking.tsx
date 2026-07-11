@@ -160,29 +160,29 @@ export default React.memo(function CalendarBooking({
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {meetings.map((meeting) => (
-            <Card key={meeting.id} className="bg-[#0F0F0F] border border-zinc-800 rounded-none p-4 hover:border-[#C9A84C]/50 transition-colors flex flex-col justify-between">
-              <div className="space-y-3">
-                <div className="flex items-start justify-between gap-1.5">
-                  <h4 className="font-cinzel text-xs font-bold text-white uppercase tracking-wider truncate flex-1">
+            <Card key={meeting.id} className="bg-card text-card-foreground border border-border rounded-none p-4 hover:border-[#C9A84C]/50 transition-colors flex flex-col justify-between min-w-0 w-full overflow-hidden">
+              <div className="space-y-3 min-w-0">
+                <div className="flex items-start justify-between gap-1.5 min-w-0">
+                  <h4 className="font-cinzel text-xs font-bold text-card-foreground uppercase tracking-wider truncate flex-1 text-left">
                     {meeting.title}
                   </h4>
                   <button
                     onClick={() => onDeleteMeeting(meeting.id)}
-                    className="text-zinc-500 hover:text-red-500"
+                    className="text-zinc-550 hover:text-red-500 shrink-0"
                     title="Cancel call"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
 
-                <div className="space-y-1.5 text-[11px] text-[#F5F0E8]/60">
+                <div className="space-y-1.5 text-[11px] text-muted-foreground text-left min-w-0">
                   <p className="flex items-center gap-1.5 truncate"><User className="w-3.5 h-3.5 text-[#C9A84C]" /> {meeting.leadName}</p>
                   <p className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5 text-[#C9A84C]" /> {new Date(meeting.date).toLocaleDateString()}</p>
                   <p className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-[#C9A84C]" /> {meeting.time}</p>
                 </div>
 
                 {meeting.notes && (
-                  <p className="bg-[#050505] p-2 border border-zinc-900 text-[10px] text-zinc-400 italic leading-relaxed">
+                  <p className="bg-muted/50 p-2 border border-border text-[10px] text-muted-foreground italic leading-relaxed text-left">
                     "{meeting.notes}"
                   </p>
                 )}
@@ -191,7 +191,7 @@ export default React.memo(function CalendarBooking({
           ))}
 
           {meetings.length === 0 && (
-            <div className="col-span-full py-12 bg-[#050505] border border-zinc-900 text-center text-xs text-zinc-500 italic">
+            <div className="col-span-full py-12 bg-muted/50 border border-border text-center text-xs text-muted-foreground italic">
               No meetings scheduled. Click "Schedule Meeting" to book a client callback.
             </div>
           )}

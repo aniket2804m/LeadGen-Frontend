@@ -80,15 +80,15 @@ export default React.memo(function SearchResultsSection({
           const isAuditing = lead.auditProgress && lead.auditProgress !== "idle" && lead.auditProgress !== "completed" && lead.auditProgress !== "failed";
           
           return (
-            <Card key={lead.id} className="bg-[#0F0F0F] border border-[#C9A84C]/15 rounded-none flex flex-col justify-between hover:border-[#C9A84C] transition-all duration-300">
-              <CardHeader className="p-5 pb-3 border-b border-[#C9A84C]/10 text-left">
-                <div className="space-y-1.5">
-                  <div className="flex items-start justify-between gap-1">
-                    <CardTitle className="font-cinzel text-sm md:text-base text-white tracking-wider uppercase truncate flex-1">
+            <Card key={lead.id} className="bg-card text-card-foreground border border-border rounded-none flex flex-col justify-between hover:border-[#C9A84C] transition-all duration-300 min-w-0 w-full overflow-hidden">
+              <CardHeader className="p-5 pb-3 border-b border-border text-left">
+                <div className="space-y-1.5 min-w-0">
+                  <div className="flex items-start justify-between gap-1 min-w-0">
+                    <CardTitle className="font-cinzel text-xs sm:text-sm md:text-base text-card-foreground tracking-wider uppercase truncate flex-1">
                       {lead.name}
                     </CardTitle>
                     {isAudited && (
-                      <span className={`text-[10px] font-bold ${(lead.auditScore || 0) < 60 ? 'text-[#F5C518]' : 'text-green-500'}`}>
+                      <span className={`text-[10px] font-bold ${(lead.auditScore || 0) < 60 ? 'text-[#F5C518]' : 'text-green-500'} shrink-0`}>
                         {lead.auditScore}/100
                       </span>
                     )}
@@ -98,21 +98,21 @@ export default React.memo(function SearchResultsSection({
                     <div className="flex items-center gap-1 text-xs text-[#F5C518]">
                       <Star className="w-3.5 h-3.5 fill-[#F5C518]" />
                       <span>{lead.rating}</span>
-                      <span className="text-[#F5F0E8]/30">({lead.rating > 4.5 ? "Good" : "Needs Care"})</span>
+                      <span className="text-muted-foreground/60">({lead.rating > 4.5 ? "Good" : "Needs Care"})</span>
                     </div>
                   )}
                 </div>
               </CardHeader>
 
-              <CardContent className="p-5 space-y-4 text-xs text-[#F5F0E8]/70 text-left">
-                <div className="space-y-2">
-                  <div className="flex items-start gap-2">
+              <CardContent className="p-5 space-y-4 text-xs text-muted-foreground text-left min-w-0">
+                <div className="space-y-2 min-w-0">
+                  <div className="flex items-start gap-2 min-w-0">
                     <MapPin className="w-3.5 h-3.5 text-[#C9A84C] shrink-0 mt-0.5" />
-                    <span>{lead.address}</span>
+                    <span className="truncate">{lead.address}</span>
                   </div>
                   
                   {lead.website && (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 min-w-0">
                       <Globe className="w-3.5 h-3.5 text-[#C9A84C] shrink-0" />
                       <span className="truncate">{lead.website}</span>
                     </div>
@@ -120,13 +120,13 @@ export default React.memo(function SearchResultsSection({
                 </div>
 
                 {isAudited ? (
-                  <div className="space-y-2 border-t border-[#C9A84C]/10 pt-3">
-                    <p className="font-cormorant italic text-[#F5F0E8]/50">
+                  <div className="space-y-2 border-t border-border pt-3 min-w-0">
+                    <p className="font-cormorant italic text-muted-foreground">
                       "{lead.auditData?.proposal?.summary}"
                     </p>
                   </div>
                 ) : (
-                  <div className="bg-[#050505] p-3 text-center border border-[#C9A84C]/5 text-[#F5F0E8]/40 italic">
+                  <div className="bg-muted/50 p-3 text-center border border-border text-muted-foreground italic">
                     Click Audit below to perform crawling, speed benchmarks & custom proposals.
                   </div>
                 )}

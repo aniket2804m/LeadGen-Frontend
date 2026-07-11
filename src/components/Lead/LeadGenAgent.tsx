@@ -17,13 +17,11 @@ import {
   ChevronLeft, 
   Globe, 
   Plus, 
-  Layers, 
-  Compass, 
-  Lock,
   Menu,
   Star,
   FileText,
-  Settings
+  Settings,
+  ShieldCheck
 } from "lucide-react";
 import API from "../../config/api";
 import { Button } from "@/components/ui/button";
@@ -36,7 +34,7 @@ import KeysPanel from "./KeysPanel";
 import FinderForm from "./FinderForm";
 import SearchResultsSection from "./SearchResultsSection";
 import CRMBoard from "./CRMBoard";
-import DeepAuditModal from "./DeepAuditModal";
+import DeepAuditModal from "./DeepAudit/DeepAuditModal";
 import LogsMonitor from "./LogsMonitor";
 import AdminDashboard from "./AdminDashboard";
 import CalendarBooking from "./CalendarBooking";
@@ -44,7 +42,7 @@ import CalendarBooking from "./CalendarBooking";
 export default function LeadGenAgent() {
   const {
     activeTab,
-    setActiveTab,
+    setActiveTab: originalSetActiveTab,
     industry,
     setIndustry,
     location,
@@ -119,7 +117,15 @@ export default function LeadGenAgent() {
 
   const navigate = useNavigate();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [findLeadsDropdown, setFindLeadsDropdown] = useState(true);
+
+  const setActiveTab = useCallback((tab: any) => {
+    originalSetActiveTab(tab);
+    setMobileSidebarOpen(false);
+  }, [originalSetActiveTab]);
+  const [auditSearch, setAuditSearch] = useState("");
+  const [auditScoreFilter, setAuditScoreFilter] = useState<string>("ALL");
 
   // Load current user details
   const [currentUser, setCurrentUser] = useState<{ name: string; email: string; role: string } | null>(null);
@@ -185,37 +191,48 @@ export default function LeadGenAgent() {
       case "finder": return "Find Leads";
       case "crm": return "My Leads";
       case "demos": return "Demo Sites";
-      case "outreach": return "Email Outreach";
+      case "outreach": return "WhatsApp Outreach";
       case "campaigns": return "Campaigns";
       case "activity": return "Activity";
       case "calendar": return "Calendar";
       case "users": return "User Accounts";
       case "scout": return "Scout AI";
       case "reports": return "Reports";
+      case "deepaudit": return "Deep Audit";
       case "settings": return "Settings";
       default: return tab;
     }
   };
 
   return (
-    <div className="light-console min-h-screen bg-[#F8FAFC] text-slate-800 flex font-sans">
+    <div className="light-console min-h-screen bg-[#F8FAFC] text-slate-800 flex font-sans relative overflow-x-hidden">
+      {/* Mobile sidebar overlay backdrop */}
+      {mobileSidebarOpen && (
+        <div 
+          onClick={() => setMobileSidebarOpen(false)} 
+          className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-30 md:hidden"
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className={`bg-white border-r border-slate-200 flex flex-col fixed top-0 bottom-0 left-0 transition-all duration-300 z-30 ${sidebarCollapsed ? 'w-16' : 'w-64'}`}>
+      <aside className={`bg-white border-r border-slate-200 flex flex-col fixed top-0 bottom-0 left-0 transition-all duration-300 z-40 
+        ${mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
+        md:translate-x-0 
+        ${sidebarCollapsed ? 'md:w-16' : 'md:w-64'} 
+        w-64 min-h-[100dvh] h-full overflow-x-hidden`}>
         
         {/* Scrollable Container (Logo + Navigation Groups) */}
         <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden flex flex-col">
           
           {/* Logo Section */}
-          <div className="h-20 flex items-center px-4 border-b border-slate-100 gap-2.5 overflow-hidden shrink-0">
+          <div className="min-h-[5rem] py-3 flex items-center px-4 border-b border-slate-100 gap-2.5 overflow-hidden shrink-0">
             <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold shrink-0 shadow-md shadow-indigo-100">
               <Globe className="w-4 h-4" />
             </div>
-            {!sidebarCollapsed && (
-              <div className="flex flex-col text-left">
-                <span className="font-bold text-slate-900 tracking-tight text-sm">PurnovaEmpire</span>
-                <span className="text-[9px] text-indigo-500 font-semibold tracking-wider uppercase -mt-0.5">Scrape. Score. AI-Audit. Close.</span>
-              </div>
-            )}
+            <div className={`flex flex-col text-left transition-all ${sidebarCollapsed ? 'md:hidden' : 'flex'}`}>
+              <span className="font-bold text-slate-900 tracking-tight text-sm">PurnovaLead</span>
+              <span className="text-[9px] text-indigo-500 font-semibold tracking-wider uppercase -mt-0.5">Scrape. Score. AI-Audit. Close.</span>
+            </div>
           </div>
 
           {/* Navigation Links */}
@@ -223,19 +240,22 @@ export default function LeadGenAgent() {
             
             {/* Group: MAIN */}
             <div className="space-y-1">
-              {!sidebarCollapsed && <span className="text-[10px] font-bold text-slate-400 tracking-widest uppercase px-3 block mb-2 text-left">Main</span>}
+              <span className={`text-[10px] font-bold text-slate-400 tracking-widest uppercase px-3 block mb-2 text-left ${sidebarCollapsed ? 'md:hidden' : ''}`}>Main</span>
               
               {/* Dashboard Link */}
               <button
-                onClick={() => setActiveTab("dashboard")}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 text-xs font-medium rounded-lg transition-all ${
+                onClick={() => {
+                  setActiveTab("dashboard");
+                  if (window.innerWidth < 768) setMobileSidebarOpen(false);
+                }}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 min-h-[44px] text-xs font-medium rounded-lg transition-all ${
                   activeTab === "dashboard" 
                     ? "bg-indigo-50 text-indigo-600 font-semibold" 
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                 }`}
               >
                 <LayoutDashboard className="w-4 h-4 shrink-0" />
-                {!sidebarCollapsed && <span>Dashboard</span>}
+                <span className={sidebarCollapsed ? 'md:hidden' : ''}>Dashboard</span>
               </button>
 
               {/* Find Leads Menu */}
@@ -249,22 +269,27 @@ export default function LeadGenAgent() {
                       setFindLeadsDropdown(!findLeadsDropdown);
                     }
                   }}
-                  className={`w-full flex items-center justify-between px-3 py-2.5 text-xs font-medium rounded-lg text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all ${
+                  className={`w-full flex items-center justify-between px-3 py-2.5 min-h-[44px] text-xs font-medium rounded-lg text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all ${
                     activeTab === "finder" ? "text-indigo-600 font-semibold" : ""
                   }`}
                 >
                   <div className="flex items-center gap-3">
                     <Search className="w-4 h-4 shrink-0" />
-                    {!sidebarCollapsed && <span>Find Leads</span>}
+                    <span className={sidebarCollapsed ? 'md:hidden' : ''}>Find Leads</span>
                   </div>
-                  {!sidebarCollapsed && (findLeadsDropdown ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />)}
+                  <span className={sidebarCollapsed ? 'md:hidden' : ''}>
+                    {findLeadsDropdown ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
+                  </span>
                 </button>
 
-                {findLeadsDropdown && !sidebarCollapsed && (
-                  <div className="pl-9 space-y-0.5">
+                {findLeadsDropdown && (
+                  <div className={`pl-9 space-y-0.5 ${sidebarCollapsed ? 'md:hidden' : 'block'}`}>
                     <button
-                      onClick={() => setActiveTab("finder")}
-                      className={`w-full text-left py-2 px-3 text-[11px] font-medium rounded-md transition-all ${
+                      onClick={() => {
+                        setActiveTab("finder");
+                        if (window.innerWidth < 768) setMobileSidebarOpen(false);
+                      }}
+                      className={`w-full text-left py-2 px-3 min-h-[44px] flex items-center text-[11px] font-medium rounded-md transition-all ${
                         activeTab === "finder"
                           ? "text-indigo-600 font-semibold bg-indigo-50/50"
                           : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
@@ -273,8 +298,11 @@ export default function LeadGenAgent() {
                       Google Maps Search
                     </button>
                     <button
-                      onClick={() => setActiveTab("finder")}
-                      className="w-full text-left py-2 px-3 text-[11px] font-medium text-slate-400 cursor-not-allowed hover:bg-slate-50 flex items-center justify-between"
+                      onClick={() => {
+                        setActiveTab("finder");
+                        if (window.innerWidth < 768) setMobileSidebarOpen(false);
+                      }}
+                      className="w-full text-left py-2 px-3 min-h-[44px] flex items-center justify-between text-[11px] font-medium text-slate-400 cursor-not-allowed hover:bg-slate-50"
                       disabled
                     >
                       <span>Custom / IT Search</span>
@@ -286,236 +314,281 @@ export default function LeadGenAgent() {
 
               {/* My Leads Link */}
               <button
-                onClick={() => setActiveTab("crm")}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 text-xs font-medium rounded-lg transition-all ${
+                onClick={() => {
+                  setActiveTab("crm");
+                  if (window.innerWidth < 768) setMobileSidebarOpen(false);
+                }}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 min-h-[44px] text-xs font-medium rounded-lg transition-all ${
                   activeTab === "crm" 
                     ? "bg-indigo-50 text-indigo-600 font-semibold" 
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                 }`}
               >
                 <Users className="w-4 h-4 shrink-0" />
-                {!sidebarCollapsed && (
-                  <div className="flex items-center justify-between w-full">
-                    <span>My Leads</span>
-                    <span className="bg-slate-100 text-slate-600 text-[10px] px-1.5 py-0.5 rounded-full font-bold">{crmLeads.length}</span>
-                  </div>
-                )}
+                <div className={`flex items-center justify-between w-full ${sidebarCollapsed ? 'md:hidden flex' : 'flex'}`}>
+                  <span className={sidebarCollapsed ? 'md:hidden' : ''}>My Leads</span>
+                  <span className="bg-slate-100 text-slate-600 text-[10px] px-1.5 py-0.5 rounded-full font-bold">{crmLeads.length}</span>
+                </div>
               </button>
 
               {/* Demo Sites Link */}
               <button
-                onClick={() => setActiveTab("demos")}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 text-xs font-medium rounded-lg transition-all ${
+                onClick={() => {
+                  setActiveTab("demos");
+                  if (window.innerWidth < 768) setMobileSidebarOpen(false);
+                }}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 min-h-[44px] text-xs font-medium rounded-lg transition-all ${
                   activeTab === "demos" 
                     ? "bg-indigo-50 text-indigo-600 font-semibold" 
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                 }`}
               >
                 <Monitor className="w-4 h-4 shrink-0" />
-                {!sidebarCollapsed && <span>Demo Sites</span>}
+                <span className={sidebarCollapsed ? 'md:hidden' : ''}>Demo Sites</span>
               </button>
             </div>
 
             {/* Group: OUTREACH */}
             <div className="space-y-1">
-              {!sidebarCollapsed && <span className="text-[10px] font-bold text-slate-400 tracking-widest uppercase px-3 block mb-2 text-left">Outreach</span>}
+              <span className={`text-[10px] font-bold text-slate-400 tracking-widest uppercase px-3 block mb-2 text-left ${sidebarCollapsed ? 'md:hidden' : ''}`}>Outreach</span>
 
               {/* Email Outreach Link */}
               <button
-                onClick={() => setActiveTab("outreach")}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 text-xs font-medium rounded-lg transition-all ${
+                onClick={() => {
+                  setActiveTab("outreach");
+                  if (window.innerWidth < 768) setMobileSidebarOpen(false);
+                }}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 min-h-[44px] text-xs font-medium rounded-lg transition-all ${
                   activeTab === "outreach" 
                     ? "bg-indigo-50 text-indigo-600 font-semibold" 
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                 }`}
               >
                 <Mail className="w-4 h-4 shrink-0" />
-                {!sidebarCollapsed && <span>Email Outreach</span>}
+                <span className={sidebarCollapsed ? 'md:hidden' : ''}>WhatsApp Outreach</span>
               </button>
 
               {/* Campaigns Link */}
               <button
-                onClick={() => setActiveTab("campaigns")}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 text-xs font-medium rounded-lg transition-all ${
+                onClick={() => {
+                  setActiveTab("campaigns");
+                  if (window.innerWidth < 768) setMobileSidebarOpen(false);
+                }}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 min-h-[44px] text-xs font-medium rounded-lg transition-all ${
                   activeTab === "campaigns" 
                     ? "bg-indigo-50 text-indigo-600 font-semibold" 
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                 }`}
               >
                 <Megaphone className="w-4 h-4 shrink-0" />
-                {!sidebarCollapsed && <span>Campaigns</span>}
+                <span className={sidebarCollapsed ? 'md:hidden' : ''}>Campaigns</span>
               </button>
 
               {/* Activity Link */}
               <button
-                onClick={() => setActiveTab("activity")}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 text-xs font-medium rounded-lg transition-all ${
+                onClick={() => {
+                  setActiveTab("activity");
+                  if (window.innerWidth < 768) setMobileSidebarOpen(false);
+                }}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 min-h-[44px] text-xs font-medium rounded-lg transition-all ${
                   activeTab === "activity" 
                     ? "bg-indigo-50 text-indigo-600 font-semibold" 
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                 }`}
               >
                 <History className="w-4 h-4 shrink-0" />
-                {!sidebarCollapsed && <span>Activity</span>}
+                <span className={sidebarCollapsed ? 'md:hidden' : ''}>Activity</span>
               </button>
             </div>
 
             {/* Group: TOOLS */}
             <div className="space-y-1">
-              {!sidebarCollapsed && <span className="text-[10px] font-bold text-slate-400 tracking-widest uppercase px-3 block mb-2 text-left">Tools</span>}
+              <span className={`text-[10px] font-bold text-slate-400 tracking-widest uppercase px-3 block mb-2 text-left ${sidebarCollapsed ? 'md:hidden' : ''}`}>Tools</span>
 
               {/* Scout AI Link (Special highlighted tab) */}
               <button
-                onClick={() => setActiveTab("scout")}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 text-xs font-semibold rounded-lg transition-all border ${
+                onClick={() => {
+                  setActiveTab("scout");
+                  if (window.innerWidth < 768) setMobileSidebarOpen(false);
+                }}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 min-h-[44px] text-xs font-semibold rounded-lg transition-all border ${
                   activeTab === "scout" 
                     ? "bg-indigo-50 text-indigo-600 border-indigo-100 shadow-sm" 
                     : "bg-indigo-50/40 text-indigo-500 border-indigo-100/10 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-100/50"
                 }`}
               >
                 <Star className="w-4 h-4 shrink-0 fill-current text-indigo-500" />
-                {!sidebarCollapsed && (
-                  <div className="flex items-center justify-between w-full">
-                    <span>Scout AI</span>
-                    <span className="bg-emerald-100 text-emerald-700 text-[8px] font-extrabold px-1.5 py-0.5 rounded-full uppercase tracking-wider scale-90">New</span>
-                  </div>
-                )}
+                <div className={`flex items-center justify-between w-full ${sidebarCollapsed ? 'md:hidden flex' : 'flex'}`}>
+                  <span>Scout AI</span>
+                  <span className="bg-emerald-100 text-emerald-700 text-[8px] font-extrabold px-1.5 py-0.5 rounded-full uppercase tracking-wider scale-90">New</span>
+                </div>
               </button>
 
               {/* Reports Link */}
               <button
-                onClick={() => setActiveTab("reports")}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 text-xs font-medium rounded-lg transition-all ${
+                onClick={() => {
+                  setActiveTab("reports");
+                  if (window.innerWidth < 768) setMobileSidebarOpen(false);
+                }}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 min-h-[44px] text-xs font-medium rounded-lg transition-all ${
                   activeTab === "reports" 
                     ? "bg-indigo-50 text-indigo-600 font-semibold" 
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                 }`}
               >
                 <FileText className="w-4 h-4 shrink-0" />
-                {!sidebarCollapsed && <span>Reports</span>}
+                <span className={sidebarCollapsed ? 'md:hidden' : ''}>Reports</span>
+              </button>
+
+              {/* Deep Audit Link */}
+              <button
+                onClick={() => {
+                  setActiveTab("deepaudit");
+                  if (window.innerWidth < 768) setMobileSidebarOpen(false);
+                }}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 min-h-[44px] text-xs font-medium rounded-lg transition-all ${
+                  activeTab === "deepaudit" 
+                    ? "bg-indigo-50 text-indigo-600 font-semibold" 
+                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                }`}
+              >
+                <ShieldCheck className="w-4 h-4 shrink-0 text-slate-550" />
+                <span className={sidebarCollapsed ? 'md:hidden' : ''}>Deep Audit</span>
               </button>
 
               {/* Settings Link */}
               <button
-                onClick={() => setActiveTab("settings")}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 text-xs font-medium rounded-lg transition-all ${
+                onClick={() => {
+                  setActiveTab("settings");
+                  if (window.innerWidth < 768) setMobileSidebarOpen(false);
+                }}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 min-h-[44px] text-xs font-medium rounded-lg transition-all ${
                   activeTab === "settings" 
                     ? "bg-indigo-50 text-indigo-600 font-semibold" 
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                 }`}
               >
                 <Settings className="w-4 h-4 shrink-0" />
-                {!sidebarCollapsed && <span>Settings</span>}
+                <span className={sidebarCollapsed ? 'md:hidden' : ''}>Settings</span>
               </button>
             </div>
 
             {/* Group: MANAGEMENT */}
             <div className="space-y-1">
-              {!sidebarCollapsed && <span className="text-[10px] font-bold text-slate-400 tracking-widest uppercase px-3 block mb-2 text-left">Management</span>}
+              <span className={`text-[10px] font-bold text-slate-400 tracking-widest uppercase px-3 block mb-2 text-left ${sidebarCollapsed ? 'md:hidden' : ''}`}>Management</span>
 
               {/* Calendar Link */}
               <button
-                onClick={() => setActiveTab("calendar")}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 text-xs font-medium rounded-lg transition-all ${
+                onClick={() => {
+                  setActiveTab("calendar");
+                  if (window.innerWidth < 768) setMobileSidebarOpen(false);
+                }}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 min-h-[44px] text-xs font-medium rounded-lg transition-all ${
                   activeTab === "calendar" 
                     ? "bg-indigo-50 text-indigo-600 font-semibold" 
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                 }`}
               >
                 <Calendar className="w-4 h-4 shrink-0" />
-                {!sidebarCollapsed && (
-                  <div className="flex items-center justify-between w-full">
-                    <span>Calendar</span>
-                    <span className="bg-slate-100 text-slate-600 text-[10px] px-1.5 py-0.5 rounded-full font-bold">{meetings.length}</span>
-                  </div>
-                )}
+                <div className={`flex items-center justify-between w-full ${sidebarCollapsed ? 'md:hidden flex' : 'flex'}`}>
+                  <span>Calendar</span>
+                  <span className="bg-slate-100 text-slate-600 text-[10px] px-1.5 py-0.5 rounded-full font-bold">{meetings.length}</span>
+                </div>
               </button>
 
               {/* User Accounts Link */}
               <button
-                onClick={() => setActiveTab("users")}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 text-xs font-medium rounded-lg transition-all ${
+                onClick={() => {
+                  setActiveTab("users");
+                  if (window.innerWidth < 768) setMobileSidebarOpen(false);
+                }}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 min-h-[44px] text-xs font-medium rounded-lg transition-all ${
                   activeTab === "users" 
                     ? "bg-indigo-50 text-indigo-600 font-semibold" 
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                 }`}
               >
                 <UserCheck className="w-4 h-4 shrink-0" />
-                {!sidebarCollapsed && <span>User Accounts</span>}
+                <span className={sidebarCollapsed ? 'md:hidden' : ''}>User Accounts</span>
               </button>
             </div>
-
           </nav>
-        </div>
-
-        {/* Sidebar Footer (shrink-0, stays fixed on overflow scroll) */}
-        <div className="p-3 border-t border-slate-100 space-y-3 shrink-0">
+        </div> 
+        <div 
+          style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 24px)' }}
+          className="p-3 border-t border-slate-100 space-y-3 shrink-0"
+        >
           
           {/* User Profile Info Card */}
-          {!sidebarCollapsed ? (
-            <div className="flex items-center gap-3 p-3 bg-slate-50 border border-slate-100 rounded-2xl text-left">
-              <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold text-sm shrink-0 uppercase">
-                {profileInitials}
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-xs font-bold text-slate-800 truncate">{profileName}</p>
-                <p className="text-[10px] text-slate-500 truncate">{profileEmail}</p>
-              </div>
-            </div>
-          ) : (
-            <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold text-sm mx-auto shrink-0 uppercase">
+          <div className="flex items-center gap-3 p-3 bg-slate-50 border border-slate-100 rounded-2xl text-left">
+            <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold text-sm shrink-0 uppercase mx-auto md:mx-0">
               {profileInitials}
             </div>
-          )}
+            <div className={`min-w-0 flex-1 ${sidebarCollapsed ? 'md:hidden' : 'block'}`}>
+              <p className="text-xs font-bold text-slate-800 truncate">{profileName}</p>
+              <p className="text-[10px] text-slate-500 truncate">{profileEmail}</p>
+            </div>
+          </div>
 
           {/* Action Buttons (Redesigned as full-width pill buttons) */}
           <div className="space-y-2">
             <button
               onClick={handleLogout}
-              className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs font-bold rounded-full border border-slate-200 text-red-600 bg-white hover:bg-slate-50 hover:text-red-700 transition-all"
+              className="w-full flex items-center justify-center gap-2 px-3 py-2 min-h-[44px] text-xs font-bold rounded-full border border-slate-200 text-red-600 bg-white hover:bg-slate-50 hover:text-red-700 transition-all"
             >
               <LogOut className="w-4 h-4 shrink-0" />
-              {!sidebarCollapsed && <span>Sign Out</span>}
+              <span className={sidebarCollapsed ? 'md:hidden' : ''}>Sign Out</span>
             </button>
 
             <button
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs font-bold rounded-full border border-slate-200 text-slate-500 bg-white hover:bg-slate-50 hover:text-slate-700 transition-all"
+              className="hidden md:flex w-full items-center justify-center gap-2 px-3 py-2 min-h-[44px] text-xs font-bold rounded-full border border-slate-200 text-slate-500 bg-white hover:bg-slate-50 hover:text-slate-700 transition-all"
             >
               <ChevronLeft className={`w-4 h-4 shrink-0 transition-transform ${sidebarCollapsed ? 'rotate-180' : ''}`} />
-              {!sidebarCollapsed && <span>Collapse</span>}
+              <span>Collapse</span>
             </button>
           </div>
-
         </div>
       </aside>
 
       {/* Main Content Area */}
-      <div className={`flex-1 transition-all duration-300 min-h-screen pb-24 ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
+      <div 
+        style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 24px)' }}
+        className={`flex-1 transition-all duration-300 min-h-screen pb-24 ${sidebarCollapsed ? 'md:ml-16' : 'md:ml-64'} ml-0 overflow-x-hidden`}
+      >
         {/* Top Header Row with dynamic title and pills */}
-        <header className="h-20 bg-white border-b border-slate-200 px-6 sm:px-8 flex items-center justify-between sticky top-0 z-20">
-          <h2 className="text-lg font-bold text-slate-800 capitalize">
-            {getTabTitle(activeTab)}
-          </h2>
+        <header className="min-h-[5rem] py-3 bg-white border-b border-slate-200 px-4 sm:px-8 flex flex-wrap items-center justify-between sticky top-0 z-20 gap-4">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <button
+              onClick={() => setMobileSidebarOpen(true)}
+              className="md:hidden w-11 h-11 flex items-center justify-center rounded-lg text-slate-650 hover:bg-slate-100 active:bg-slate-200 transition-colors shrink-0"
+              aria-label="Open menu"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            <h2 className="text-sm sm:text-base md:text-lg font-bold text-slate-800 capitalize truncate">
+              {getTabTitle(activeTab)}
+            </h2>
+          </div>
 
           {/* Dashboard Pills (Header) */}
-          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-            <span className="bg-purple-50 text-purple-700 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 py-1 shrink-0">
+            <span className="bg-purple-50 text-purple-700 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shrink-0">
               6d left - Upgrade
             </span>
-            <span className="bg-orange-50 text-orange-700 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+            <span className="bg-orange-50 text-orange-700 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shrink-0">
               Leads <span className="text-slate-800 ml-1">{crmLeads.length}</span>
             </span>
-            <span className="bg-cyan-50 text-cyan-700 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+            <span className="bg-cyan-50 text-cyan-700 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shrink-0">
               Qualified <span className="text-slate-800 ml-1">{crmLeads.filter(l => l.score === "HOT").length}</span>
             </span>
-            <span className="bg-yellow-50 text-yellow-700 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+            <span className="bg-yellow-50 text-yellow-700 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shrink-0">
               Demos <span className="text-slate-800 ml-1">{crmLeads.filter(l => l.status === "CLOSED").length}</span>
             </span>
-            <span className="bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+            <span className="bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shrink-0">
               Replied <span className="text-slate-800 ml-1">{crmLeads.filter(l => l.status === "CLOSED").length}</span>
             </span>
-            <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-full">
+            <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-full shrink-0">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Live</span>
             </div>
@@ -523,7 +596,7 @@ export default function LeadGenAgent() {
         </header>
 
         {/* Content Container */}
-        <main className="p-6 sm:p-8 max-w-7xl mx-auto space-y-8">
+        <main className="p-4 sm:p-8 max-w-7xl mx-auto space-y-6 sm:space-y-8">
           {/* Simulation / Sandbox Mode Banner */}
           <div className="flex flex-wrap items-center justify-between gap-4 bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
             <div className="flex items-center gap-2">
@@ -561,7 +634,7 @@ export default function LeadGenAgent() {
 
           {/* Keys Drawer */}
           {showKeysPanel && (
-            <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+            <div className="bg-white border border-slate-200 rounded-xl p-4 sm:p-6 shadow-sm">
               <KeysPanel
                 anthropicKeyInput={anthropicKeyInput}
                 googleKeyInput={googleKeyInput}
@@ -588,7 +661,7 @@ export default function LeadGenAgent() {
           {/* Find Leads Tab */}
           {activeTab === "finder" && (
             <div className="space-y-8">
-              <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+              <div className="bg-white border border-slate-200 rounded-xl p-4 sm:p-6 shadow-sm">
                 <FinderForm
                   industry={industry}
                   setIndustry={setIndustry}
@@ -605,12 +678,12 @@ export default function LeadGenAgent() {
               </div>
 
               {/* Log stream directly under form */}
-              <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+              <div className="bg-white border border-slate-200 rounded-xl p-4 sm:p-6 shadow-sm">
                 <LogsMonitor logs={logs} />
               </div>
 
               {/* Grid result section */}
-              <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+              <div className="bg-white border border-slate-200 rounded-xl p-4 sm:p-6 shadow-sm">
                 <SearchResultsSection
                   searchResults={searchResults}
                   executeLeadAudit={executeLeadAudit}
@@ -628,7 +701,7 @@ export default function LeadGenAgent() {
 
           {/* My Leads Tab (CRM) */}
           {activeTab === "crm" && (
-            <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm overflow-hidden">
+            <div className="bg-white border border-slate-200 rounded-xl p-4 sm:p-6 shadow-sm overflow-hidden">
               <CRMBoard
                 crmLeads={crmLeads}
                 onInspectLead={setSelectedLead}
@@ -641,7 +714,7 @@ export default function LeadGenAgent() {
 
           {/* Calendar Tab */}
           {activeTab === "calendar" && (
-            <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+            <div className="bg-white border border-slate-200 rounded-xl p-4 sm:p-6 shadow-sm">
               <CalendarBooking
                 meetings={meetings}
                 crmLeads={crmLeads}
@@ -653,7 +726,7 @@ export default function LeadGenAgent() {
 
           {/* User Directory Tab */}
           {activeTab === "users" && (
-            <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+            <div className="bg-white border border-slate-200 rounded-xl p-4 sm:p-6 shadow-sm">
               <div className="space-y-4">
                 <h3 className="font-bold text-slate-800 text-sm tracking-wide border-b border-slate-100 pb-3 text-left">
                   User Accounts Directory
@@ -735,7 +808,7 @@ export default function LeadGenAgent() {
 
           {/* Scout AI Tab */}
           {activeTab === "scout" && (
-            <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-6">
+            <div className="bg-white border border-slate-200 rounded-xl p-4 sm:p-6 shadow-sm space-y-6">
               <div className="border-b border-slate-100 pb-3 text-left">
                 <h3 className="font-bold text-slate-800 text-sm tracking-wide">
                   Scout AI Engine
@@ -772,7 +845,7 @@ export default function LeadGenAgent() {
 
           {/* Reports Tab */}
           {activeTab === "reports" && (
-            <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-6">
+            <div className="bg-white border border-slate-200 rounded-xl p-4 sm:p-6 shadow-sm space-y-6">
               <div className="border-b border-slate-100 pb-3 text-left">
                 <h3 className="font-bold text-slate-800 text-sm tracking-wide">
                   System Reports & Exports
@@ -828,9 +901,159 @@ export default function LeadGenAgent() {
             </div>
           )}
 
+          {/* Deep Audit Tab */}
+          {activeTab === "deepaudit" && (() => {
+            const auditedLeads = crmLeads.filter(l => l.auditData);
+            const totalAudited = auditedLeads.length;
+            const avgScore = totalAudited > 0 ? Math.round(auditedLeads.reduce((acc, l) => acc + (l.auditData?.digitalFootprintScore || 0), 0) / totalAudited) : 0;
+            const hotOpps = auditedLeads.filter(l => l.auditData?.scoreCategory === "HOT").length;
+            const criticalGaps = auditedLeads.filter(l => (l.auditData?.digitalFootprintScore || 0) < 60).length;
+
+            const filteredAudited = auditedLeads.filter(lead => {
+              const matchesSearch = lead.name.toLowerCase().includes(auditSearch.toLowerCase()) || 
+                (lead.website && lead.website.toLowerCase().includes(auditSearch.toLowerCase())) || 
+                (lead.auditData?.businessInfo?.category && lead.auditData.businessInfo.category.toLowerCase().includes(auditSearch.toLowerCase()));
+              
+              const matchesFilter = auditScoreFilter === "ALL" || lead.auditData?.scoreCategory === auditScoreFilter;
+              
+              return matchesSearch && matchesFilter;
+            });
+
+            return (
+              <div className="space-y-6">
+                
+                {/* Aggregate stats cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-left">
+                  <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-1 shadow-sm hover:shadow transition-shadow">
+                    <span className="text-[10px] text-slate-400 font-semibold uppercase">Total Audited Leads</span>
+                    <h4 className="text-2xl font-bold text-slate-800">{totalAudited}</h4>
+                    <p className="text-[9px] text-slate-400">Sync status: Active</p>
+                  </div>
+                  <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-1 shadow-sm hover:shadow transition-shadow">
+                    <span className="text-[10px] text-slate-400 font-semibold uppercase">Average Footprint Score</span>
+                    <h4 className="text-2xl font-bold text-slate-800">{avgScore} / 100</h4>
+                    <p className="text-[9px] text-slate-400">Target score goal: 80+</p>
+                  </div>
+                  <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-1 shadow-sm hover:shadow transition-shadow">
+                    <span className="text-[10px] text-slate-400 font-semibold uppercase">Hot Opportunities</span>
+                    <h4 className="text-2xl font-bold text-emerald-600">{hotOpps}</h4>
+                    <p className="text-[9px] text-slate-400">Ready to outreach</p>
+                  </div>
+                  <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-1 shadow-sm hover:shadow transition-shadow">
+                    <span className="text-[10px] text-slate-400 font-semibold uppercase">Critical Gaps Detected</span>
+                    <h4 className="text-2xl font-bold text-rose-500">{criticalGaps}</h4>
+                    <p className="text-[9px] text-slate-400">Score below 60/100</p>
+                  </div>
+                </div>
+
+                {/* Search / Filters and List */}
+                <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-6">
+                  
+                  {/* Header & Controls */}
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-100 pb-4">
+                    <div className="text-left">
+                      <h3 className="font-bold text-slate-800 text-sm tracking-wide">
+                        Audited Local Businesses Directory
+                      </h3>
+                      <p className="text-xs text-slate-500 mt-1">
+                        Detailed audit checklists, SEO ratings, and generated proposal blueprints.
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+                      <input
+                        type="text"
+                        placeholder="Search lead, domain, category..."
+                        value={auditSearch}
+                        onChange={(e) => setAuditSearch(e.target.value)}
+                        className="border border-slate-200 rounded-lg px-3 py-1.5 text-xs outline-none focus:border-indigo-500 transition-colors w-full sm:w-[200px]"
+                      />
+                      <select
+                        value={auditScoreFilter}
+                        onChange={(e) => setAuditScoreFilter(e.target.value)}
+                        className="border border-slate-200 rounded-lg px-3 py-1.5 text-xs outline-none bg-white text-slate-700 focus:border-indigo-500 transition-colors cursor-pointer w-full sm:w-auto"
+                      >
+                        <option value="ALL">All Scores</option>
+                        <option value="HOT">Hot Opportunity</option>
+                        <option value="WARM">Warm Opportunity</option>
+                        <option value="COLD">Cold Opportunity</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Audited List Table */}
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-xs text-left border-collapse">
+                      <thead>
+                        <tr className="border-b border-slate-100 text-slate-400 uppercase tracking-widest text-[9px] font-bold">
+                          <th className="py-3 px-4">Business Details</th>
+                          <th className="py-3 px-4">Score</th>
+                          <th className="py-3 px-4">Opportunity</th>
+                          <th className="py-3 px-4">Website Speed / SEO</th>
+                          <th className="py-3 px-4 text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-50">
+                        {filteredAudited.map((lead) => {
+                          const footprintScore = lead.auditData?.digitalFootprintScore || 0;
+                          
+                          let scoreBadgeColor = "bg-rose-50 text-rose-700 border-rose-100";
+                          if (footprintScore >= 80) scoreBadgeColor = "bg-emerald-50 text-emerald-700 border-emerald-100";
+                          else if (footprintScore >= 60) scoreBadgeColor = "bg-amber-50 text-amber-700 border-amber-100";
+                          else if (footprintScore >= 40) scoreBadgeColor = "bg-orange-50 text-orange-700 border-orange-100";
+
+                          return (
+                            <tr key={lead.id} className="hover:bg-slate-50/50 transition-colors">
+                              <td className="py-4 px-4 text-left">
+                                <span className="font-semibold text-slate-900 block text-sm">{lead.name}</span>
+                                <span className="text-[10px] text-slate-500 font-mono">{lead.website || "No Website"}</span>
+                              </td>
+                              <td className="py-4 px-4 text-left">
+                                <span className={`px-2 py-0.5 border text-[9px] font-bold uppercase rounded font-mono ${scoreBadgeColor}`}>
+                                  {footprintScore} / 100
+                                </span>
+                              </td>
+                              <td className="py-4 px-4 text-left font-semibold text-[10px] uppercase">
+                                <span className={lead.auditData?.scoreCategory === "HOT" ? "text-rose-600 font-bold" : "text-slate-500"}>
+                                  {lead.auditData?.scoreCategory} Opportunity
+                                </span>
+                              </td>
+                              <td className="py-4 px-4 text-left font-mono font-semibold text-slate-650">
+                                Speed: <span className="text-red-500 mr-2">{lead.auditData?.pageSpeed?.performance || "N/A"}</span>
+                                SEO: <span className="text-blue-500">{lead.auditData?.pageSpeed?.seo || "N/A"}</span>
+                              </td>
+                              <td className="py-4 px-4 text-right">
+                                <Button
+                                  onClick={() => setSelectedLead(lead)}
+                                  size="sm"
+                                  className="bg-indigo-650 hover:bg-indigo-700 text-white rounded-lg text-[10px] px-3 py-1.5 h-auto font-semibold"
+                                >
+                                  Inspect Audit
+                                </Button>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                        {filteredAudited.length === 0 && (
+                          <tr>
+                            <td colSpan={5} className="py-8 text-center text-slate-400 italic font-sans">
+                              {totalAudited === 0 ? "No audited prospects found in CRM. Search Google Maps in the 'Find Leads' tab and execute audits to populate this dashboard." : "No audited leads match your search criteria."}
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+
+                </div>
+
+              </div>
+            );
+          })()}
+
           {/* Settings Tab */}
           {activeTab === "settings" && (
-            <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-6">
+            <div className="bg-white border border-slate-200 rounded-xl p-4 sm:p-6 shadow-sm space-y-6">
               <div className="border-b border-slate-100 pb-3 text-left">
                 <h3 className="font-bold text-slate-800 text-sm tracking-wide">
                   Console Configuration Settings
@@ -877,7 +1100,7 @@ export default function LeadGenAgent() {
 
           {/* Demo Sites Tab */}
           {activeTab === "demos" && (
-            <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-4">
+            <div className="bg-white border border-slate-200 rounded-xl p-4 sm:p-6 shadow-sm space-y-4">
               <div className="border-b border-slate-100 pb-3 text-left">
                 <h3 className="font-bold text-slate-800 text-sm tracking-wide">
                   Generated Client Demo Sites
@@ -928,7 +1151,7 @@ export default function LeadGenAgent() {
 
           {/* Email Outreach Tab */}
           {activeTab === "outreach" && (
-            <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-4">
+            <div className="bg-white border border-slate-200 rounded-xl p-4 sm:p-6 shadow-sm space-y-4">
               <div className="border-b border-slate-100 pb-3 text-left">
                 <h3 className="font-bold text-slate-800 text-sm tracking-wide">
                   Outreach Center
@@ -976,7 +1199,7 @@ export default function LeadGenAgent() {
 
           {/* Campaigns Tab */}
           {activeTab === "campaigns" && (
-            <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-6">
+            <div className="bg-white border border-slate-200 rounded-xl p-4 sm:p-6 shadow-sm space-y-6">
               <div className="border-b border-slate-100 pb-3 text-left">
                 <h3 className="font-bold text-slate-800 text-sm tracking-wide">
                   Campaign Metrics
@@ -1018,7 +1241,7 @@ export default function LeadGenAgent() {
 
           {/* Activity Log Tab */}
           {activeTab === "activity" && (
-            <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-4">
+            <div className="bg-white border border-slate-200 rounded-xl p-4 sm:p-6 shadow-sm space-y-4">
               <div className="border-b border-slate-100 pb-3 text-left">
                 <h3 className="font-bold text-slate-800 text-sm tracking-wide">
                   Console Engine Status & Activity Log
