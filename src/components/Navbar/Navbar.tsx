@@ -84,6 +84,37 @@ const handleHowWork = () => {
   How it works
 </button>
 
+
+<button
+  onClick={() =>
+    document
+      .getElementById("feature")
+      ?.scrollIntoView({ behavior: "smooth" })
+  }
+>
+  Feature
+</button>
+
+<button
+  onClick={() =>
+    document
+      .getElementById("platform")
+      ?.scrollIntoView({ behavior: "smooth" })
+  }
+>
+  Platform
+</button>
+
+<button
+  onClick={() =>
+    document
+      .getElementById("pricing")
+      ?.scrollIntoView({ behavior: "smooth" })
+  }
+>
+  Pricing
+</button>
+
             {role === "admin" && (
               <Link
                 to="/console"
@@ -153,15 +184,93 @@ const handleHowWork = () => {
         </div>
       </nav>
 
+{/* Mobile View */}
       {/* MOBILE NAV DRAWER */}
       {menuOpen && (
         <div className="fixed inset-0 top-20 z-50 flex flex-col p-6 space-y-6 glass border-t border-[#C9A84C]/15 animate-[fadeIn_0.3s_ease-out] md:hidden">
           <Link
             to="/"
-            onClick={() => setMenuOpen(false)}
+            onClick={() => {
+    setMenuOpen(false);
+
+    document
+      .getElementById("home")
+      ?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+  }}
             className="text-sm font-semibold uppercase tracking-wider text-[#F5F0E8]/80 hover:text-[#C9A84C]"
           >
             Home
+          </Link>
+
+          <Link
+            to="/"
+            onClick={() => {
+    setMenuOpen(false);
+
+    document
+      .getElementById("howwork")
+      ?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+  }}
+            className="text-sm font-semibold uppercase tracking-wider text-[#F5F0E8]/80 hover:text-[#C9A84C]"
+          >
+            How it Works
+          </Link>
+
+          <Link
+            to="/"
+            onClick={() => {
+    setMenuOpen(false);
+
+    document
+      .getElementById("feature")
+      ?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+  }}
+            className="text-sm font-semibold uppercase tracking-wider text-[#F5F0E8]/80 hover:text-[#C9A84C]"
+          >
+            Feature
+          </Link>
+
+          <Link
+            to="/"
+            onClick={() => {
+    setMenuOpen(false);
+
+    document
+      .getElementById("platform")
+      ?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+  }}
+            className="text-sm font-semibold uppercase tracking-wider text-[#F5F0E8]/80 hover:text-[#C9A84C]"
+          >
+            Platform
+          </Link>
+
+          <Link
+            to="/"
+            onClick={() => {
+    setMenuOpen(false);
+
+    document
+      .getElementById("pricing")
+      ?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+  }}
+            className="text-sm font-semibold uppercase tracking-wider text-[#F5F0E8]/80 hover:text-[#C9A84C]"
+          >
+            Pricing
           </Link>
 
           {role === "admin" && (

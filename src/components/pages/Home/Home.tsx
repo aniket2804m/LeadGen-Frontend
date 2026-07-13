@@ -6,6 +6,7 @@ import {
   Send,
   FileText,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 
@@ -43,6 +44,48 @@ const leads = [
 ];
 
 const Home = () => {
+
+  const [visibleLeads, setVisibleLeads] = useState<typeof leads>([]);
+const [scanning, setScanning] = useState(true);
+const [currentText, setCurrentText] = useState("Searching Google Maps...");
+
+useEffect(() => {
+  setVisibleLeads([]);
+
+  const texts = [
+    "Searching Google Maps...",
+    "Finding local businesses...",
+    "Analyzing website quality...",
+    "Calculating AI Score...",
+    "Preparing outreach...",
+  ];
+
+  let textIndex = 0;
+
+  const textInterval = setInterval(() => {
+    textIndex = (textIndex + 1) % texts.length;
+    setCurrentText(texts[textIndex]);
+  }, 1800);
+
+  const timers = leads.map((lead, index) =>
+    setTimeout(() => {
+      setVisibleLeads((prev) => {
+        if (prev.some((item) => item.name === lead.name)) return prev;
+        return [...prev, lead];
+      });
+
+      if (index === leads.length - 1) {
+        setScanning(false);
+        clearInterval(textInterval);
+      }
+    }, index * 1800)
+  );
+
+  return () => {
+    clearInterval(textInterval);
+    timers.forEach(clearTimeout);
+  };
+}, []);
 
   const navigate = useNavigate();
 
@@ -140,26 +183,38 @@ const handleHowWork = () => {
                 <span className="w-3 h-3 rounded-full bg-green-400"></span>
 
                 <div className="ml-5 flex-1 h-8 rounded-md border bg-white text-center text-xs text-gray-400 flex items-center justify-center">
-                  LeadEmpire • My Leads
+                 Purnova Lead • My Leads
                 </div>
               </div>
 
               <div className="p-6">
-                <div className="flex justify-between mb-6">
-                  <h3 className="font-bold text-lg">
-                    Live Lead Scanner
-                  </h3>
+               <div className="flex justify-between items-center mb-6">
+  <div>
+    <h3 className="font-bold text-lg">
+      Live Lead Scanner
+    </h3>
 
-                  <span className="text-green-500 text-sm font-semibold">
-                    ● SCANNING
-                  </span>
-                </div>
+    <p className="text-sm text-gray-500 mt-1">
+      {currentText}
+    </p>
+  </div>
 
+  <div className="flex items-center gap-2">
+    <span className="relative flex h-3 w-3">
+      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+      <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+    </span>
+
+    <span className="text-green-600 text-sm font-semibold">
+      {scanning ? "SCANNING" : "COMPLETE"}
+    </span>
+  </div>
+</div>
                 <div className="space-y-5">
-                  {leads.map((lead, index) => (
+                  {visibleLeads.map((lead, index) => (
                     <div
                       key={index}
-                      className="rounded-2xl border p-5 hover:shadow-lg transition"
+                      className="rounded-2xl border p-5 hover:shadow-lg transition-all duration-700 animate-[fadeIn_.6s_ease]"
                     >
                       <div className="flex justify-between">
                         <div>
@@ -181,9 +236,9 @@ const handleHowWork = () => {
 
                       <div className="h-2 rounded-full bg-gray-200 mt-5 overflow-hidden">
                         <div
-                          className={`h-full ${lead.color}`}
-                          style={{ width: lead.width }}
-                        />
+  className={`h-full ${lead.color} transition-all duration-1000`}
+  style={{ width: lead.width }}
+/>
                       </div>
 
                       <div className="flex justify-between items-center mt-4">
