@@ -503,6 +503,26 @@ export function useLeadGen() {
           websiteAnalysis: { confidenceLevel: "High", dataSource: "Simulated Lighthouse metrics", lastUpdated: new Date().toISOString().split('T')[0], apiUsed: "Lighthouse Mock" },
           socialMedia: { confidenceLevel: "Medium", dataSource: "Simulated social profiles", lastUpdated: new Date().toISOString().split('T')[0], apiUsed: "Crawl mock" }
         },
+        aeoGeoAnalysis: {
+          aeoScore: lead.website ? 72 : 12,
+          aeoDetails: {
+            schemaMarkup: lead.website ? "Needs improvement" : "Missing",
+            faqStructured: false,
+            conversationalReadability: lead.website ? "High" : "Low",
+            factualDensity: lead.website ? "Medium" : "Low",
+            strengths: lead.website ? ["Clean paragraph layout", "Clear contact details page"] : ["None"],
+            recommendations: lead.website ? ["Integrate LocalBusiness Schema markup", "Create a structured FAQ section"] : ["Develop website to enable Answer Engine Indexing"]
+          },
+          geoScore: lead.website ? 66 : 8,
+          geoDetails: {
+            citationAuthority: lead.website ? "Medium" : "Low",
+            sentimentScore: lead.rating ? Math.round(lead.rating * 20) : 50,
+            sourceDiversity: lead.website ? "Low" : "Low",
+            brandMentionFrequency: lead.website ? "Medium" : "Low",
+            strengths: lead.rating && lead.rating > 4.4 ? ["Very positive sentiment in reviews helps AI citation"] : ["None"],
+            recommendations: lead.website ? ["Secure citations on higher domain authority websites", "Get featured in local business articles & blogs"] : ["Establish brand presence to enable Generative Engine citation"]
+          }
+        },
         emailDraft: `Subject: Digital Performance Audit for ${lead.name}\n\nHi team,\n\nI was analyzing your business listing and noticed some digital optimization opportunities.`,
         whatsAppDraft: `Hi *${lead.name}*! Just ran a digital audit on your profile.`,
         followUpEmail1: `Hi, just following up.`,

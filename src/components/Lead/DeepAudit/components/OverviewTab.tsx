@@ -112,18 +112,31 @@ export default function OverviewTab({
           )}
 
           {audit && (
-            <div className="space-y-1">
-              <Badge className={`rounded-none font-bold text-[9px] uppercase px-3 py-1 ${scoreColor}`}>
-                {scoreLabel}
-              </Badge>
-              <span className="block text-[9px] text-zinc-500 mt-1">Maturity Level: {audit.aiBusinessSummary?.maturityLevel || "Seed"}</span>
+            <div className="space-y-3 w-full flex flex-col items-center">
+              <div className="space-y-1">
+                <Badge className={`rounded-none font-bold text-[9px] uppercase px-3 py-1 ${scoreColor}`}>
+                  {scoreLabel}
+                </Badge>
+                <span className="block text-[9px] text-zinc-500 mt-1">Maturity Level: {audit.aiBusinessSummary?.maturityLevel || "Seed"}</span>
+              </div>
+              <div className="flex gap-4 border-t border-zinc-900 pt-3 w-full justify-around">
+                <div>
+                  <span className="text-[8px] font-bold text-zinc-500 block uppercase tracking-wider">AEO Score</span>
+                  <span className="text-sm font-mono font-bold text-[#C9A84C]">{audit.aeoGeoAnalysis?.aeoScore !== undefined ? `${audit.aeoGeoAnalysis.aeoScore}/100` : "N/A"}</span>
+                </div>
+                <div className="border-l border-zinc-905 h-6"></div>
+                <div>
+                  <span className="text-[8px] font-bold text-zinc-500 block uppercase tracking-wider">GEO Score</span>
+                  <span className="text-sm font-mono font-bold text-[#C9A84C]">{audit.aeoGeoAnalysis?.geoScore !== undefined ? `${audit.aeoGeoAnalysis.geoScore}/100` : "N/A"}</span>
+                </div>
+              </div>
             </div>
           )}
         </div>
 
         {/* 2. Prospect profile card */}
         <div className="bg-[#0A0A0A] border border-zinc-900 p-5 space-y-4 col-span-2">
-          <h4 className="font-cinzel text-xs font-bold text-[#C9A84C] uppercase tracking-wider border-b border-zinc-900 pb-2 flex items-center gap-1.5">
+          <h4 className="font-cinzel text-xs font-bold text-[#C9A84C] bg-white uppercase tracking-wider border-b border-zinc-900 pb-2 flex items-center gap-1.5">
             <Info className="w-4 h-4" /> Company Directory Details
           </h4>
           

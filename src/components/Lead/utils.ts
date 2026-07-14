@@ -323,6 +323,19 @@ export const printProposal = (lead: ScoredLead, agencyName = "PURNOVA", logoUrl 
             <div style="font-size: 12px; font-weight: 600; color: #475569; max-width: 600px; margin: 0 auto;">
               ${lead.reasoning}
             </div>
+            ${audit.aeoGeoAnalysis ? `
+              <div style="display: flex; justify-content: center; gap: 40px; margin-top: 15px; border-top: 1px solid #E2E8F0; padding-top: 15px;">
+                <div>
+                  <span style="font-size: 10px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 1px; display: block;">AEO Score</span>
+                  <span style="font-size: 18px; font-weight: 700; color: #B45309;">${audit.aeoGeoAnalysis.aeoScore}/100</span>
+                </div>
+                <div style="border-left: 1px solid #E2E8F0; height: 35px;"></div>
+                <div>
+                  <span style="font-size: 10px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 1px; display: block;">GEO Score</span>
+                  <span style="font-size: 18px; font-weight: 700; color: #B45309;">${audit.aeoGeoAnalysis.geoScore}/100</span>
+                </div>
+              </div>
+            ` : ""}
           </div>
 
           <!-- Section 1: Business Profile -->
@@ -483,8 +496,69 @@ export const printProposal = (lead: ScoredLead, agencyName = "PURNOVA", logoUrl 
             </div>
           `}
 
-          <!-- Section 5: Competitor Comparison -->
-          <h2>5. Local Competitor Benchmark</h2>
+          <!-- Section 5: AEO & GEO Search Engine Visibility -->
+          ${audit.aeoGeoAnalysis ? `
+            <h2>5. AI Search & Generative Engine Optimization (AEO/GEO)</h2>
+            <div class="card grid-2">
+              <div>
+                <h3 style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #E2E8F0; padding-bottom: 4px; margin-bottom: 10px; color: #1E293B;">Answer Engine Optimization (AEO)</h3>
+                <div style="margin-bottom: 6px;">
+                  <span class="metric-label">Schema Markup:</span> <span class="metric-value">${audit.aeoGeoAnalysis.aeoDetails?.schemaMarkup || "N/A"}</span>
+                </div>
+                <div style="margin-bottom: 6px;">
+                  <span class="metric-label">FAQ Structuring:</span> <span class="metric-value">${audit.aeoGeoAnalysis.aeoDetails?.faqStructured ? "Structured ✓" : "Missing ✗"}</span>
+                </div>
+                <div style="margin-bottom: 6px;">
+                  <span class="metric-label">Conversational Readability:</span> <span class="metric-value">${audit.aeoGeoAnalysis.aeoDetails?.conversationalReadability || "N/A"}</span>
+                </div>
+                <div style="margin-bottom: 6px;">
+                  <span class="metric-label">Factual Density:</span> <span class="metric-value">${audit.aeoGeoAnalysis.aeoDetails?.factualDensity || "N/A"}</span>
+                </div>
+                <div style="margin-top: 10px; font-size: 11px;">
+                  <strong style="color: #1E293B; display: block; margin-bottom: 3px;">Strengths:</strong>
+                  <ul style="margin: 0 0 8px 0; padding-left: 15px; color: #475569;">
+                    ${(audit.aeoGeoAnalysis.aeoDetails?.strengths || []).map((s: string) => `<li>${s}</li>`).join("")}
+                    ${(audit.aeoGeoAnalysis.aeoDetails?.strengths || []).length === 0 ? "<li>None identified.</li>" : ""}
+                  </ul>
+                  <strong style="color: #B45309; display: block; margin-bottom: 3px;">Recommendations:</strong>
+                  <ul style="margin: 0; padding-left: 15px; color: #475569;">
+                    ${(audit.aeoGeoAnalysis.aeoDetails?.recommendations || []).map((r: string) => `<li>${r}</li>`).join("")}
+                    ${(audit.aeoGeoAnalysis.aeoDetails?.recommendations || []).length === 0 ? "<li>AEO fully optimized.</li>" : ""}
+                  </ul>
+                </div>
+              </div>
+              <div>
+                <h3 style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #E2E8F0; padding-bottom: 4px; margin-bottom: 10px; color: #1E293B;">Generative Engine Optimization (GEO)</h3>
+                <div style="margin-bottom: 6px;">
+                  <span class="metric-label">Citation Authority:</span> <span class="metric-value">${audit.aeoGeoAnalysis.geoDetails?.citationAuthority || "N/A"}</span>
+                </div>
+                <div style="margin-bottom: 6px;">
+                  <span class="metric-label">Generative Sentiment Index:</span> <span class="metric-value">${audit.aeoGeoAnalysis.geoDetails?.sentimentScore !== undefined ? `${audit.aeoGeoAnalysis.geoDetails.sentimentScore}%` : "N/A"}</span>
+                </div>
+                <div style="margin-bottom: 6px;">
+                  <span class="metric-label">Source Diversity:</span> <span class="metric-value">${audit.aeoGeoAnalysis.geoDetails?.sourceDiversity || "N/A"}</span>
+                </div>
+                <div style="margin-bottom: 6px;">
+                  <span class="metric-label">AI Training Corp. Brand Mentions:</span> <span class="metric-value">${audit.aeoGeoAnalysis.geoDetails?.brandMentionFrequency || "N/A"}</span>
+                </div>
+                <div style="margin-top: 10px; font-size: 11px;">
+                  <strong style="color: #1E293B; display: block; margin-bottom: 3px;">Strengths:</strong>
+                  <ul style="margin: 0 0 8px 0; padding-left: 15px; color: #475569;">
+                    ${(audit.aeoGeoAnalysis.geoDetails?.strengths || []).map((s: string) => `<li>${s}</li>`).join("")}
+                    ${(audit.aeoGeoAnalysis.geoDetails?.strengths || []).length === 0 ? "<li>None identified.</li>" : ""}
+                  </ul>
+                  <strong style="color: #B45309; display: block; margin-bottom: 3px;">Recommendations:</strong>
+                  <ul style="margin: 0; padding-left: 15px; color: #475569;">
+                    ${(audit.aeoGeoAnalysis.geoDetails?.recommendations || []).map((r: string) => `<li>${r}</li>`).join("")}
+                    ${(audit.aeoGeoAnalysis.geoDetails?.recommendations || []).length === 0 ? "<li>GEO fully optimized.</li>" : ""}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          ` : ""}
+
+          <!-- Section 6: Competitor Comparison -->
+          <h2>6. Local Competitor Benchmark</h2>
           <div class="card" style="padding: 5px;">
             <table>
               <thead>
@@ -520,8 +594,8 @@ export const printProposal = (lead: ScoredLead, agencyName = "PURNOVA", logoUrl 
             </table>
           </div>
 
-          <!-- Section 6: Growth Blueprint -->
-          <h2>6. Growth Recommendations & Action Plan</h2>
+          <!-- Section 7: Growth Blueprint -->
+          <h2>7. Growth Recommendations & Action Plan</h2>
           <div class="card" style="padding: 10px 15px;">
             ${recs.map((r: any) => `
               <div style="margin-bottom: 12px; border-bottom: 1px solid #F1F5F9; padding-bottom: 10px; page-break-inside: avoid;">

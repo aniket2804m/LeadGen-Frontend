@@ -40,6 +40,8 @@ export default function ProposalTab({
   const audit = lead.auditData;
   if (!audit) return null;
 
+  const aeoGeo = audit.aeoGeoAnalysis;
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-900 pb-2">
@@ -95,6 +97,49 @@ export default function ProposalTab({
                   >
                     Clear Logo
                   </Button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* AEO & GEO Summary Card */}
+      {aeoGeo && (
+        <div className="bg-[#0A0A0A] border border-zinc-900 p-5 space-y-4 text-left">
+          <h4 className="font-cinzel text-xs font-bold text-white uppercase tracking-wider border-b border-zinc-900 pb-2">
+            AI Search Visibility (AEO & GEO Roadmap)
+          </h4>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-[11px] leading-relaxed">
+            <div className="space-y-3">
+              <div className="flex justify-between items-center border-b border-zinc-950 pb-1.5 border-zinc-900">
+                <span className="font-bold text-zinc-400 uppercase tracking-wider text-[9px]">Answer Engine Optimization (AEO)</span>
+                <span className="font-mono font-bold text-[#C9A84C]">{aeoGeo.aeoScore}/100</span>
+              </div>
+              <div className="space-y-1.5">
+                <span className="text-zinc-500 font-bold block uppercase tracking-wider text-[8px]">Critical AEO Actions:</span>
+                {aeoGeo.aeoDetails?.recommendations && aeoGeo.aeoDetails.recommendations.length > 0 ? (
+                  aeoGeo.aeoDetails.recommendations.map((rec, i) => (
+                    <div key={i} className="text-zinc-300">• {rec}</div>
+                  ))
+                ) : (
+                  <div className="text-green-400 font-semibold">• AEO fully optimized.</div>
+                )}
+              </div>
+            </div>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center border-b border-zinc-950 pb-1.5 border-zinc-900">
+                <span className="font-bold text-zinc-400 uppercase tracking-wider text-[9px]">Generative Engine Optimization (GEO)</span>
+                <span className="font-mono font-bold text-[#C9A84C]">{aeoGeo.geoScore}/100</span>
+              </div>
+              <div className="space-y-1.5">
+                <span className="text-zinc-500 font-bold block uppercase tracking-wider text-[8px]">Critical GEO Actions:</span>
+                {aeoGeo.geoDetails?.recommendations && aeoGeo.geoDetails.recommendations.length > 0 ? (
+                  aeoGeo.geoDetails.recommendations.map((rec, i) => (
+                    <div key={i} className="text-zinc-300">• {rec}</div>
+                  ))
+                ) : (
+                  <div className="text-green-400 font-semibold">• GEO fully optimized.</div>
                 )}
               </div>
             </div>

@@ -38,7 +38,7 @@ export default React.memo(function FinderForm({
           Find Prospects
         </h2>
         <div className="flex items-center gap-2">
-          <Label htmlFor="model-choice" className="text-[10px] uppercase text-[#F5F0E8]/50 font-semibold tracking-wider">Model:</Label>
+          <Label htmlFor="model-choice" className="text-[10px] uppercase text-black font-semibold tracking-wider">Model:</Label>
             <select
               id="model-choice"
               value={model}
@@ -57,35 +57,35 @@ export default React.memo(function FinderForm({
       <form onSubmit={onSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="space-y-2">
-            <Label htmlFor="ind" className="text-xs uppercase text-[#F5F0E8]/70 tracking-widest font-semibold flex items-center gap-2">
+            <Label htmlFor="ind" className="text-xs uppercase text-black tracking-widest font-semibold flex items-center gap-2">
               <Briefcase className="w-3.5 h-3.5 text-[#C9A84C]" /> Industry Niche
             </Label>
             <Input
               id="ind"
               value={industry}
               onChange={(e) => setIndustry(e.target.value)}
-              placeholder="e.g. Dentists, Roofer, Boutique Hotel"
+              placeholder="e.g. Hotel, Cafe, Salun, ..."
               disabled={isSearching}
               className="bg-[#0F0F0F] border-[#C9A84C]/20 focus:border-[#C9A84C] text-[#F5F0E8] placeholder-[#F5F0E8]/30 rounded-none py-5 focus-visible:ring-0 text-sm"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="loc" className="text-xs uppercase text-[#F5F0E8]/70 tracking-widest font-semibold flex items-center gap-2">
+            <Label htmlFor="loc" className="text-xs uppercase text-black tracking-widest font-semibold flex items-center gap-2">
               <MapPin className="w-3.5 h-3.5 text-[#C9A84C]" /> Location
             </Label>
             <Input
               id="loc"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              placeholder="e.g. Austin TX, London, Seattle"
+              placeholder="e.g. Pune, Hadapsar, Pune in Karvenagar"
               disabled={isSearching}
               className="bg-[#0F0F0F] border-[#C9A84C]/20 focus:border-[#C9A84C] text-[#F5F0E8] placeholder-[#F5F0E8]/30 rounded-none py-5 focus-visible:ring-0 text-sm"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="key" className="text-xs uppercase text-[#F5F0E8]/70 tracking-widest font-semibold flex items-center gap-2">
+            <Label htmlFor="key" className="text-xs uppercasetext-black tracking-widest font-semibold flex items-center gap-2">
               <Sparkles className="w-3.5 h-3.5 text-[#C9A84C]" /> Audience Filter Keywords
             </Label>
             <Input

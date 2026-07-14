@@ -154,6 +154,40 @@ export interface ConfidenceItem {
   apiUsed: string;
 }
 
+export interface AEOGEODetails {
+  schemaMarkup?: string;
+  faqStructured?: boolean;
+  conversationalReadability?: string;
+  factualDensity?: string;
+  citationAuthority?: string;
+  sentimentScore?: number;
+  sourceDiversity?: string;
+  brandMentionFrequency?: string;
+  strengths: string[];
+  recommendations: string[];
+}
+
+export interface AEOGEOAnalysisData {
+  aeoScore: number;
+  aeoDetails: {
+    schemaMarkup: string;
+    faqStructured: boolean;
+    conversationalReadability: string;
+    factualDensity: string;
+    strengths: string[];
+    recommendations: string[];
+  };
+  geoScore: number;
+  geoDetails: {
+    citationAuthority: string;
+    sentimentScore: number;
+    sourceDiversity: string;
+    brandMentionFrequency: string;
+    strengths: string[];
+    recommendations: string[];
+  };
+}
+
 export interface AuditData {
   scrapedTextSnippet?: string;
   pageSpeed?: {
@@ -177,6 +211,7 @@ export interface AuditData {
   whatsAppDraft?: string;
   followUpEmail1?: string;
   followUpEmail2?: string;
+  aeoGeoAnalysis?: AEOGEOAnalysisData;
 
   // Backward compatibility fields to prevent compilation errors
   seoReport?: {

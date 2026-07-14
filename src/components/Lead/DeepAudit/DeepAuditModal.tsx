@@ -15,6 +15,7 @@ import SocialTab from "./components/SocialTab";
 import ProposalTab from "./components/ProposalTab";
 import OutreachTab from "./components/OutreachTab";
 import MeetingsTab from "./components/MeetingsTab";
+import AeoGeoTab from "./components/AeoGeoTab";
 
 interface DeepAuditModalProps {
   lead: ScoredLead;
@@ -43,7 +44,7 @@ interface DeepAuditModalProps {
   onVerifyEmail: (email: string) => Promise<{ isValid: boolean; status: string; bounceRisk: string; details?: string }>;
 }
 
-type TabType = "overview" | "technical" | "googleGbp" | "social" | "competitor" | "proposal" | "outreach" | "meetings" | "billing";
+type TabType = "overview" | "aeoGeo" | "technical" | "googleGbp" | "social" | "competitor" | "proposal" | "outreach" | "meetings" | "billing";
 
 export default function DeepAuditModal({
   lead,
@@ -112,9 +113,10 @@ export default function DeepAuditModal({
 
         {/* Modal Tab Controls (Mobile Scrollable) */}
         <div className="flex overflow-x-auto whitespace-nowrap border-b border-zinc-900 bg-white text-xs scrollbar-none flex-nowrap shrink-0">
-          {(["overview", "googleGbp", "technical", "social", "competitor", "proposal", "outreach", "meetings", "billing"] as TabType[]).map((tab) => {
+          {(["overview", "aeoGeo", "googleGbp", "technical", "social", "competitor", "proposal", "outreach", "meetings", "billing"] as TabType[]).map((tab) => {
             let label = tab as string;
             if (tab === "overview") label = "Overview";
+            else if (tab === "aeoGeo") label = "AEO & GEO";
             else if (tab === "googleGbp") label = "GBP Analysis";
             else if (tab === "technical") label = "Website & SEO";
             else if (tab === "social") label = "Socials";
@@ -132,6 +134,7 @@ export default function DeepAuditModal({
                   activeModalTab === tab ? "border-[#C9A84C] text-[#C9A84C]" : "border-transparent text-zinc-500 hover:text-zinc-300"
                 }`}
                 disabled={
+                  (tab === "aeoGeo" && !audit) ||
                   (tab === "technical" && !audit) ||
                   (tab === "googleGbp" && !audit) ||
                   (tab === "social" && !audit) ||
@@ -162,6 +165,10 @@ export default function DeepAuditModal({
 
           {activeModalTab === "googleGbp" && (
             <GoogleGbpTab lead={lead} />
+          )}
+
+          {activeModalTab === "aeoGeo" && (
+            <AeoGeoTab lead={lead} />
           )}
 
           {activeModalTab === "technical" && (

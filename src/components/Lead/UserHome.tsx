@@ -5,6 +5,7 @@ import HowWorks from "../pages/Home/HowWorks";
 import Feature from "../pages/Home/Feature";
 import Platform from "../pages/Home/Platform";
 import Pricing from "../pages/Home/Pricing";
+import Faq from "../pages/Home/Faq";
 
 const UserHome = () => {
   return (
@@ -31,6 +32,8 @@ const UserHome = () => {
 <section id="pricing"> 
   <Pricing />
 </section>
+
+<Faq />
 
     </div>
   )
